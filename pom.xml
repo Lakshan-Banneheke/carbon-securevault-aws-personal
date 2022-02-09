@@ -26,11 +26,10 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Export-Package>
-                            org.wso2.carbon.securevault.aws;version="${project.version}",
+                            org.wso2.carbon.securevault.aws,
                         </Export-Package>
                         <DynamicImport-Package>*;resolution:=optional</DynamicImport-Package>
                         <Import-Package>
-                            software.amazon.awssdk.services.secretsmanager,
                             org.apache.commons.lang;version="${commons-lang.wso2.osgi.version.range}",
                             org.apache.commons.logging;version="${commons-logging.osgi.version.range}",
 
@@ -39,6 +38,7 @@
                             org.wso2.securevault.secret;version="${org.wso2.securevault.import.version.range}"
                         </Import-Package>
                         <Embed-Dependency>
+                            secretsmanager,
                             aws-json-protocol,
                             third-party-jackson-core,
                             json-utils,
@@ -57,20 +57,8 @@
                             apache-client,
                             httpclient,
                             httpcore,
-                            netty-nio-client,
-                            netty-codec-http,
-                            netty-codec-http2,
-                            netty-codec,
-                            netty-transport,
-                            netty-resolver,
-                            netty-common,
-                            netty-buffer,
-                            netty-handler,
-                            netty-tcnative-classes,
-                            netty-transport-classes-epoll,
-                            netty-transport-native-unix-common,
-                            netty-reactive-streams-http,
-                            netty-reactive-streams
+                            aws-crt-client,
+                            aws-crt
                         </Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <_fixupmessages>"Classes found in the wrong directory..."</_fixupmessages>
@@ -123,6 +111,17 @@
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>secretsmanager</artifactId>
             <version>${software.amazon.awssdk.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>software.amazon.awssdk</groupId>
+                    <artifactId>netty-nio-client</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>aws-crt-client</artifactId>
+            <version>2.17.124-PREVIEW</version>
         </dependency>
     </dependencies>
 
