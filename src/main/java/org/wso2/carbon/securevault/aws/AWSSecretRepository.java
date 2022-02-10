@@ -24,6 +24,7 @@ public class AWSSecretRepository implements SecretRepository {
     private IdentityKeyStoreWrapper identityKeyStoreWrapper;
     private TrustKeyStoreWrapper trustKeyStoreWrapper;
     private SecretRepository parentRepository;
+    // Secret Client used to retrieve secrets from AWS Secrets Manager Vault
     private SecretsManagerClient secretsClient;
 
 
@@ -56,7 +57,6 @@ public class AWSSecretRepository implements SecretRepository {
     }
 
 
-
     /**
      * Get Secret from AWS Secrets Manager
      *
@@ -78,11 +78,17 @@ public class AWSSecretRepository implements SecretRepository {
 
             GetSecretValueResponse valueResponse = secretsClient.getSecretValue(valueRequest);
             secret = valueResponse.secretString();
+
+            if (StringUtils.isEmpty(secret)) {
+                log.error("Secret with alias " + alias + " not available in the AWS Secrets Manager Vault.");
+            }
+
             if (log.isDebugEnabled()) {
                 log.debug("Secret " + alias + " is retrieved");
             }
 
         } catch (SecretsManagerException e) {
+            log.error("Error retrieving secret with alias " + alias + " from AWS Secrets Manager Vault");
             log.error(e.awsErrorDetails().errorMessage());
         }
         return secret;
