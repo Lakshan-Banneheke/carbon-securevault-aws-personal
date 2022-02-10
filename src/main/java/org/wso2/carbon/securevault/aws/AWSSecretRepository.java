@@ -82,10 +82,6 @@ public class AWSSecretRepository implements SecretRepository {
                 log.debug("Secret " + alias + " is retrieved");
             }
 
-            //TODO remove these logs
-            log.info("Secret retrieved");
-            log.info("SECRET IS " + secret);
-
         } catch (SecretsManagerException e) {
             log.error(e.awsErrorDetails().errorMessage());
         }
