@@ -13,8 +13,6 @@ import software.amazon.awssdk.services.secretsmanager.model.SecretsManagerExcept
 
 import java.util.Properties;
 
-import static org.wso2.carbon.securevault.aws.AWSVaultConstants.AWS_REGION_PARAMETER;
-
 
 /**
  * AWS Secret Repository.
@@ -45,14 +43,19 @@ public class AWSSecretRepository implements SecretRepository {
     @Override
     public void init(Properties properties, String id) {
         log.info("Initializing AWS Secure Vault");
-        String regionString = properties.getProperty(AWS_REGION_PARAMETER);
-        Region region = Region.of(regionString);
 
-        secretsClient = SecretsManagerClient.builder()
+        try {
+            Region region = AWSVaultUtils.getAWSRegion(properties);
+            secretsClient = SecretsManagerClient.builder()
                     .region(region)
                     .build();
 
+        } catch (AWSVaultException e) {
+            log.error(e.getMessage(), e);
+        }
     }
+
+
 
     /**
      * Get Secret from AWS Secrets Manager
