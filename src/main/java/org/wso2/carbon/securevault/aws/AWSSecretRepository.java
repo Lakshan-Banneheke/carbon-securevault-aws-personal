@@ -24,6 +24,7 @@ public class AWSSecretRepository implements SecretRepository {
     private IdentityKeyStoreWrapper identityKeyStoreWrapper;
     private TrustKeyStoreWrapper trustKeyStoreWrapper;
     private SecretRepository parentRepository;
+    // Secret Client used to retrieve secrets from AWS Secrets Manager Vault
     private SecretsManagerClient secretsClient;
 
 
@@ -56,7 +57,6 @@ public class AWSSecretRepository implements SecretRepository {
     }
 
 
-
     /**
      * Get Secret from AWS Secrets Manager
      *
@@ -70,19 +70,36 @@ public class AWSSecretRepository implements SecretRepository {
         }
 
         String secret = alias;
-
+        String secretName = alias;
         try {
+            String secretVersion = null; //If no secret version is set, it will send the request with null set for versionID which will return the latest version from AWS Secrets Manager
+            if (alias.contains("_")) {
+                int underscoreIndex = alias.indexOf("_");
+                secretName = alias.substring(0, underscoreIndex);
+                secretVersion = alias.substring(underscoreIndex + 1);
+                if (log.isDebugEnabled()) {
+                    log.debug("Secret version found for " + secretName  + ". Retrieving the specified version of secret.");
+                }
+            } else {
+                if (log.isDebugEnabled()) {
+                    log.debug("Secret version not found for " + secretName  + ". Retrieving latest version of secret.");
+                }
+            }
+
             GetSecretValueRequest valueRequest = GetSecretValueRequest.builder()
-                    .secretId(alias)
+                    .secretId(secretName)
+                    .versionId(secretVersion)
                     .build();
 
             GetSecretValueResponse valueResponse = secretsClient.getSecretValue(valueRequest);
             secret = valueResponse.secretString();
+
             if (log.isDebugEnabled()) {
-                log.debug("Secret " + alias + " is retrieved");
+                log.debug("Secret " + secretName + " is retrieved");
             }
 
         } catch (SecretsManagerException e) {
+            log.error("Error retrieving secret with alias " + secretName + " from AWS Secrets Manager Vault");
             log.error(e.awsErrorDetails().errorMessage());
         }
         return secret;
