@@ -33,8 +33,8 @@
                             org.apache.commons.lang;version="${commons-lang.wso2.osgi.version.range}",
                             org.apache.commons.logging;version="${commons-logging.osgi.version.range}",
 <!--                            TODO Check versioning. It seems to pickup the versions even when defined like this. Didnt pickup the versions in IS 12.0..... Might have to specify the versions as specified in the jars.-->
-<!--                            org.apache.http.client.*,-->
-<!--                            org.apache.http.*,-->
+                            org.apache.http.client.*,
+                            org.apache.http.*,
                             org.wso2.carbon.utils;version="${carbon.kernel.package.import.version.range}",
                             org.wso2.securevault.keystore;version="${org.wso2.securevault.import.version.range}",
                             org.wso2.securevault.secret;version="${org.wso2.securevault.import.version.range}"
@@ -57,8 +57,6 @@
                             aws-core,
                             metrics-spi,
                             apache-client,
-                            httpclient,
-                            httpcore,
                             aws-crt-client,
                             aws-crt
                         </Embed-Dependency>
@@ -126,6 +124,7 @@
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>aws-crt-client</artifactId>
+<!--            TODO get the version from properties by appending the aws version with preview-->
             <version>2.17.124-PREVIEW</version>
         </dependency>
     </dependencies>
