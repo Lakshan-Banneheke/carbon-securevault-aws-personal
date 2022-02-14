@@ -24,10 +24,12 @@ public class AWSSecretManagerClient {
             synchronized (AWSSecretManagerClient.class){
                 if (secretsClient==null){
                     try {
+                        log.info("Initializing AWS Secure Vault");
                         Region region = getAWSRegion(properties);
                         secretsClient = SecretsManagerClient.builder()
                                 .region(region)
                                 .build();
+                        log.info("AWS Secrets Client created");
 
                     } catch (AWSVaultException e) {
                         log.error(e.getMessage(), e);
