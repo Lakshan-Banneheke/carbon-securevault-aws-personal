@@ -1,8 +1,8 @@
 package org.wso2.carbon.securevault.aws;
 
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.securevault.SecureVaultException;
 import org.wso2.securevault.secret.AbstractSecretCallbackHandler;
 import org.wso2.securevault.secret.SingleSecretCallback;
 import static org.wso2.carbon.securevault.aws.AWSVaultConstants.CONFIG_FILE_PATH;
@@ -37,7 +37,11 @@ public class AWSSecretCallbackHandler extends AbstractSecretCallbackHandler {
             if (keyPassword != null && keyPassword.trim().equals("true")) {
                 sameKeyAndKeyStorePass = false;
             }
-            readPassword(sameKeyAndKeyStorePass);
+            try {
+                readPassword(sameKeyAndKeyStorePass);
+            } catch (AWSVaultException e) {
+                log.error(e.getMessage(), e);
+            }
         }
         if (singleSecretCallback.getId().equals("identity.key.password")) {
             singleSecretCallback.setSecret(privateKeyPassword);
@@ -52,7 +56,7 @@ public class AWSSecretCallbackHandler extends AbstractSecretCallbackHandler {
      *
      * @param sameKeyAndKeyStorePass flag to indicate whether the keystore and primary key passwords are the same
      */
-    private void readPassword(boolean sameKeyAndKeyStorePass) {
+    private void readPassword(boolean sameKeyAndKeyStorePass) throws AWSVaultException {
         if (log.isDebugEnabled()) {
             log.debug("Reading configuration properties from file.");
         }
@@ -62,7 +66,7 @@ public class AWSSecretCallbackHandler extends AbstractSecretCallbackHandler {
             inputStream = new FileInputStream(CONFIG_FILE_PATH);
             properties.load(inputStream);
         } catch (Exception e) {
-            throw new SecureVaultException("Error while loading configurations from " + CONFIG_FILE_PATH, e);
+            throw new AWSVaultException("Error while loading configurations from " + CONFIG_FILE_PATH);
         } finally {
             try {
                 if (inputStream != null) {
@@ -73,9 +77,17 @@ public class AWSSecretCallbackHandler extends AbstractSecretCallbackHandler {
             }
         }
 
-        AWSSecretRepository awsSecretRepository = new AWSSecretRepository();
         String keyStoreAlias = properties.getProperty(IDENTITY_STORE_PASSWORD_ALIAS);
         String privateKeyAlias = properties.getProperty(IDENTITY_KEY_PASSWORD_ALIAS);
+
+        if (StringUtils.isEmpty(keyStoreAlias)){
+            throw new AWSVaultException("keystore.identity.store.alias property has not been set. Unable to retrieve root keystore password from AWS Secrets Manager.");
+        } else if (StringUtils.isEmpty(privateKeyAlias) && !sameKeyAndKeyStorePass ) {
+            throw new AWSVaultException("keystore.identity.key.alias property has not been set. Unable to retrieve root private key from AWS Secrets Manager.");
+        }
+
+        AWSSecretRepository awsSecretRepository = new AWSSecretRepository();
+        awsSecretRepository.init(properties, "AWSSecretRepository");
         keyStorePassword = awsSecretRepository.getSecret(keyStoreAlias);
         if (sameKeyAndKeyStorePass) {
             privateKeyPassword = keyStorePassword;
@@ -83,6 +95,4 @@ public class AWSSecretCallbackHandler extends AbstractSecretCallbackHandler {
             privateKeyPassword = awsSecretRepository.getSecret(privateKeyAlias);
         }
     }
-
-
 }
