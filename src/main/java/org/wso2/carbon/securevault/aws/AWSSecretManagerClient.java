@@ -24,7 +24,6 @@ public class AWSSecretManagerClient {
             synchronized (AWSSecretManagerClient.class){
                 if (secretsClient==null){
                     try {
-                        log.info("Initializing AWS Secure Vault");
                         Region region = getAWSRegion(properties);
                         AwsCredentialsProvider credentialsProvider = getCredentialsProvider(properties);
                         secretsClient = SecretsManagerClient.builder()

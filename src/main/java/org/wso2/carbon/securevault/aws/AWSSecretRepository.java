@@ -2,8 +2,6 @@ package org.wso2.carbon.securevault.aws;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.securevault.keystore.IdentityKeyStoreWrapper;
-import org.wso2.securevault.keystore.TrustKeyStoreWrapper;
 import org.wso2.securevault.secret.SecretRepository;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRequest;
@@ -11,7 +9,6 @@ import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRespon
 import software.amazon.awssdk.services.secretsmanager.model.SecretsManagerException;
 
 import java.util.Properties;
-
 
 /**
  * AWS Secret Repository.
@@ -33,6 +30,7 @@ public class AWSSecretRepository implements SecretRepository {
      */
     @Override
     public void init(Properties properties, String id) {
+        log.info("Initializing AWS Secure Vault");
         secretsClient = AWSSecretManagerClient.getInstance(properties);
     }
 
