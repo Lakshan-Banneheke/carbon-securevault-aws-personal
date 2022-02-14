@@ -26,7 +26,7 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Export-Package>
-                            org.wso2.carbon.securevault.aws,
+                            org.wso2.carbon.securevault.aws
                         </Export-Package>
 <!--                        <DynamicImport-Package>*;resolution:=optional</DynamicImport-Package>-->
                         <Import-Package>
