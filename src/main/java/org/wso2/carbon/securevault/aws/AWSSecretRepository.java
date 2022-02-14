@@ -5,7 +5,6 @@ import org.apache.commons.logging.LogFactory;
 import org.wso2.securevault.keystore.IdentityKeyStoreWrapper;
 import org.wso2.securevault.keystore.TrustKeyStoreWrapper;
 import org.wso2.securevault.secret.SecretRepository;
-import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRequest;
 import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueResponse;
@@ -27,7 +26,6 @@ public class AWSSecretRepository implements SecretRepository {
     // Secret Client used to retrieve secrets from AWS Secrets Manager Vault
     private SecretsManagerClient secretsClient;
 
-
     public AWSSecretRepository(IdentityKeyStoreWrapper identityKeyStoreWrapper,
                                      TrustKeyStoreWrapper trustKeyStoreWrapper) {
 
@@ -44,16 +42,9 @@ public class AWSSecretRepository implements SecretRepository {
     @Override
     public void init(Properties properties, String id) {
         log.info("Initializing AWS Secure Vault");
+        secretsClient = AWSSecretManagerClient.getInstance(properties);
+        log.info("AWS Secrets Client created");
 
-        try {
-            Region region = AWSVaultUtils.getAWSRegion(properties);
-            secretsClient = SecretsManagerClient.builder()
-                    .region(region)
-                    .build();
-
-        } catch (AWSVaultException e) {
-            log.error(e.getMessage(), e);
-        }
     }
 
 
