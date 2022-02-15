@@ -88,6 +88,8 @@ public class AWSSecretCallbackHandler extends AbstractSecretCallbackHandler {
         try (InputStream inputStream = new FileInputStream(CONFIG_FILE_PATH)) {
             properties.load(inputStream);
 
+        } catch (RuntimeException e) {
+            throw e;
         } catch (Exception e) {
             throw new AWSVaultException("Error while loading configurations from " + CONFIG_FILE_PATH);
         }
@@ -96,9 +98,11 @@ public class AWSSecretCallbackHandler extends AbstractSecretCallbackHandler {
         String privateKeyAlias = properties.getProperty(IDENTITY_KEY_PASSWORD_ALIAS);
 
         if (StringUtils.isEmpty(keyStoreAlias)) {
-            throw new AWSVaultException("keystore.identity.store.alias property has not been set. Unable to retrieve root keystore password from AWS Secrets Manager.");
+            throw new AWSVaultException("keystore.identity.store.alias property has not been set. " +
+                    "Unable to retrieve root keystore password from AWS Secrets Manager.");
         } else if (StringUtils.isEmpty(privateKeyAlias) && !sameKeyAndKeyStorePass) {
-            throw new AWSVaultException("keystore.identity.key.alias property has not been set. Unable to retrieve root private key from AWS Secrets Manager.");
+            throw new AWSVaultException("keystore.identity.key.alias property has not been set. " +
+                    "Unable to retrieve root private key from AWS Secrets Manager.");
         }
 
         AWSSecretRepository awsSecretRepository = new AWSSecretRepository();
