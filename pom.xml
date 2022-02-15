@@ -38,6 +38,8 @@
                             org.wso2.securevault.keystore;version="${org.wso2.securevault.import.version.range}",
                             org.wso2.securevault.secret;version="${org.wso2.securevault.import.version.range}"
                         </Import-Package>
+<!--                        Only the dependencies that are required by the AWS SDK which are not available in the IS are embedded.-->
+<!--                        They are embedded because these dependencies are only required within this extension.-->
                         <Embed-Dependency>
                             secretsmanager,
                             aws-json-protocol,
@@ -60,7 +62,6 @@
                             aws-crt
                         </Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
-                        <_fixupmessages>"Classes found in the wrong directory..."</_fixupmessages>
                     </instructions>
                 </configuration>
             </plugin>
