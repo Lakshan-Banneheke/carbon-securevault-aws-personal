@@ -32,11 +32,12 @@ public class AWSSecretRepositoryProvider implements SecretRepositoryProvider {
      * Get Secret Repository.
      *
      * @param identityKeyStoreWrapper Identity KeyStore Wrapper
-     * @param trustKeyStoreWrapper Trust KeyStore Wrapper
+     * @param trustKeyStoreWrapper    Trust KeyStore Wrapper
      * @return AWSSecretRepository
      */
     @Override
     public SecretRepository getSecretRepository(IdentityKeyStoreWrapper identityKeyStoreWrapper, TrustKeyStoreWrapper trustKeyStoreWrapper) {
+
         return new AWSSecretRepository();
     }
 }

@@ -21,7 +21,12 @@ package org.wso2.carbon.securevault.aws;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import software.amazon.awssdk.auth.credentials.*;
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.AwsCredentialsProviderChain;
+import software.amazon.awssdk.auth.credentials.ContainerCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.InstanceProfileCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 
@@ -33,14 +38,16 @@ import static org.wso2.carbon.securevault.aws.AWSVaultConstants.AWS_REGION_PARAM
 import static org.wso2.carbon.securevault.aws.AWSVaultConstants.CREDENTIAL_PROVIDERS;
 
 public class AWSSecretManagerClient {
+
     private static final Log log = LogFactory.getLog(AWSSecretManagerClient.class);
 
     private static SecretsManagerClient secretsClient;
 
-    public static SecretsManagerClient getInstance(Properties properties){
-        if (secretsClient==null){
-            synchronized (AWSSecretManagerClient.class){
-                if (secretsClient==null){
+    public static SecretsManagerClient getInstance(Properties properties) {
+
+        if (secretsClient == null) {
+            synchronized (AWSSecretManagerClient.class) {
+                if (secretsClient == null) {
                     try {
                         log.info("Initializing AWS Secure Vault");
                         Region region = getAWSRegion(properties);
@@ -67,13 +74,14 @@ public class AWSSecretManagerClient {
      * @return The AWS Region
      * @throws AWSVaultException if the AWS Region is not set in the properties file or if it is invalid.
      */
-    private static Region getAWSRegion(Properties properties) throws AWSVaultException{
+    private static Region getAWSRegion(Properties properties) throws AWSVaultException {
+
         String regionString = properties.getProperty(AWS_REGION_PARAMETER);
         if (StringUtils.isEmpty(regionString)) {
             throw new AWSVaultException("AWS Region has not been set in secret-conf.properties file. Cannot build AWS Secrets Client!");
         }
         Region region = Region.of(regionString);
-        if (!Region.regions().contains(region)){
+        if (!Region.regions().contains(region)) {
             throw new AWSVaultException("AWS Region specified is invalid. Cannot build AWS Secrets Client!");
         }
         return region;
@@ -87,6 +95,7 @@ public class AWSSecretManagerClient {
      * @throws AWSVaultException if the provider types are not specified or invalid.
      */
     private static AwsCredentialsProvider getCredentialsProvider(Properties properties) throws AWSVaultException {
+
         List<AwsCredentialsProvider> awsCredentialsProviders = new ArrayList<>();
 
         String credentialProvidersString = properties.getProperty(CREDENTIAL_PROVIDERS);
@@ -101,7 +110,7 @@ public class AWSSecretManagerClient {
             }
 
             for (String credentialType : credentialProviderTypes) {
-             //If new credential provider types are needed to be added, add a new mapping in the switch statement
+                //If new credential provider types are needed to be added, add a new mapping in the switch statement
                 switch (credentialType) {
                     case "env":
                         awsCredentialsProviders.add(EnvironmentVariableCredentialsProvider.create());
@@ -115,7 +124,7 @@ public class AWSSecretManagerClient {
                         awsCredentialsProviders.add(DefaultCredentialsProvider.create());
                 }
             }
-            if (awsCredentialsProviders.isEmpty()){
+            if (awsCredentialsProviders.isEmpty()) {
                 throw new AWSVaultException("All AWS credential providers specified in the configuration file are invalid.");
             }
 
