@@ -25,6 +25,7 @@ import org.wso2.securevault.secret.AbstractSecretCallbackHandler;
 import org.wso2.securevault.secret.SingleSecretCallback;
 
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
@@ -33,8 +34,7 @@ import static org.wso2.carbon.securevault.aws.AWSVaultConstants.IDENTITY_KEY_PAS
 import static org.wso2.carbon.securevault.aws.AWSVaultConstants.IDENTITY_STORE_PASSWORD_ALIAS;
 
 /**
- * Secret Callback handler class if keystore and primary key passwords are stored in the
- * AWS Vault.
+ * Secret Callback handler class if keystore and primary key passwords are stored in the AWS Vault.
  */
 public class AWSSecretCallbackHandler extends AbstractSecretCallbackHandler {
 
@@ -88,9 +88,7 @@ public class AWSSecretCallbackHandler extends AbstractSecretCallbackHandler {
         try (InputStream inputStream = new FileInputStream(CONFIG_FILE_PATH)) {
             properties.load(inputStream);
 
-        } catch (RuntimeException e) {
-            throw e;
-        } catch (Exception e) {
+        } catch (IOException e) {
             throw new AWSVaultException("Error while loading configurations from " + CONFIG_FILE_PATH);
         }
 
