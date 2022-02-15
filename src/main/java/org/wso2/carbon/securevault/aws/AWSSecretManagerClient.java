@@ -37,12 +37,24 @@ import java.util.Properties;
 import static org.wso2.carbon.securevault.aws.AWSVaultConstants.AWS_REGION_PARAMETER;
 import static org.wso2.carbon.securevault.aws.AWSVaultConstants.CREDENTIAL_PROVIDERS;
 
+/**
+ * Provides an instance of the secrets client that connects to the AWS Secrets Manager.
+ */
 public class AWSSecretManagerClient {
 
     private static final Log log = LogFactory.getLog(AWSSecretManagerClient.class);
 
-    private static SecretsManagerClient secretsClient;
+    private static volatile SecretsManagerClient secretsClient;
 
+    private AWSSecretManagerClient(){}
+
+    /**
+     * Get the instance of the AWS SecretsManagerClient.
+     * If one has not yet been created, the method will create a client and return it.
+     *
+     * @param properties Configuration properties
+     * @return AWS Secrets Manager Client instance
+     */
     public static SecretsManagerClient getInstance(Properties properties) {
 
         if (secretsClient == null) {
@@ -78,17 +90,19 @@ public class AWSSecretManagerClient {
 
         String regionString = properties.getProperty(AWS_REGION_PARAMETER);
         if (StringUtils.isEmpty(regionString)) {
-            throw new AWSVaultException("AWS Region has not been set in secret-conf.properties file. Cannot build AWS Secrets Client!");
+            throw new AWSVaultException("AWS Region has not been set in secret-conf.properties file. "
+                    + "Cannot build AWS Secrets Client! ");
         }
         Region region = Region.of(regionString);
         if (!Region.regions().contains(region)) {
-            throw new AWSVaultException("AWS Region specified is invalid. Cannot build AWS Secrets Client!");
+            throw new AWSVaultException("AWS Region specified is invalid. Cannot build AWS Secrets Client! ");
         }
         return region;
     }
 
     /**
      * Method to get the AWS Credential Provider Chain based on the configuration in the config file.
+     * If new credential provider types are needed to be added, add a new mapping in the switch statement.
      *
      * @param properties Configuration properties
      * @return AwsCredentialsProvider
@@ -97,12 +111,10 @@ public class AWSSecretManagerClient {
     private static AwsCredentialsProvider getCredentialsProvider(Properties properties) throws AWSVaultException {
 
         List<AwsCredentialsProvider> awsCredentialsProviders = new ArrayList<>();
-
         String credentialProvidersString = properties.getProperty(CREDENTIAL_PROVIDERS);
+        String[] credentialProviderTypes;
 
         if (StringUtils.isNotEmpty(credentialProvidersString)) {
-
-            String[] credentialProviderTypes;
             if (credentialProvidersString.contains(",")) {
                 credentialProviderTypes = credentialProvidersString.split(",");
             } else {
@@ -110,7 +122,6 @@ public class AWSSecretManagerClient {
             }
 
             for (String credentialType : credentialProviderTypes) {
-                //If new credential provider types are needed to be added, add a new mapping in the switch statement
                 switch (credentialType) {
                     case "env":
                         awsCredentialsProviders.add(EnvironmentVariableCredentialsProvider.create());
@@ -120,16 +131,21 @@ public class AWSSecretManagerClient {
                         break;
                     case "ecs":
                         awsCredentialsProviders.add(ContainerCredentialsProvider.builder().build());
+                        break;
                     case "default":
                         awsCredentialsProviders.add(DefaultCredentialsProvider.create());
+                        break;
+                    default:
+                        log.warn("Unknown credential type " + credentialType);
                 }
             }
+
             if (awsCredentialsProviders.isEmpty()) {
-                throw new AWSVaultException("All AWS credential providers specified in the configuration file are invalid.");
+                throw new AWSVaultException("All credential providers specified in the config file are invalid. ");
             }
 
         } else {
-            throw new AWSVaultException("AWS Credential provider type not given in configuration file.");
+            throw new AWSVaultException("AWS Credential provider type not given in configuration file. ");
         }
 
         return AwsCredentialsProviderChain.builder().credentialsProviders(awsCredentialsProviders).build();

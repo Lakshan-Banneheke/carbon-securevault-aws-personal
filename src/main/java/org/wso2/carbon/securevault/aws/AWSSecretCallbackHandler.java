@@ -25,7 +25,6 @@ import org.wso2.securevault.secret.AbstractSecretCallbackHandler;
 import org.wso2.securevault.secret.SingleSecretCallback;
 
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
@@ -59,6 +58,7 @@ public class AWSSecretCallbackHandler extends AbstractSecretCallbackHandler {
             }
             readPassword(sameKeyAndKeyStorePass);
         }
+
         if (singleSecretCallback.getId().equals("identity.key.password")) {
             singleSecretCallback.setSecret(privateKeyPassword);
         } else {
@@ -77,21 +77,14 @@ public class AWSSecretCallbackHandler extends AbstractSecretCallbackHandler {
         if (log.isDebugEnabled()) {
             log.debug("Reading configuration properties from file.");
         }
-        InputStream inputStream = null;
+
         Properties properties = new Properties();
-        try {
-            inputStream = new FileInputStream(CONFIG_FILE_PATH);
+
+        try (InputStream inputStream = new FileInputStream(CONFIG_FILE_PATH)) {
             properties.load(inputStream);
+
         } catch (Exception e) {
             throw new SecureVaultException("Error while loading configurations from " + CONFIG_FILE_PATH, e);
-        } finally {
-            try {
-                if (inputStream != null) {
-                    inputStream.close();
-                }
-            } catch (IOException e) {
-                log.warn("Error closing input stream of configuration file");
-            }
         }
 
         AWSSecretRepository awsSecretRepository = new AWSSecretRepository();
@@ -104,5 +97,4 @@ public class AWSSecretCallbackHandler extends AbstractSecretCallbackHandler {
             privateKeyPassword = awsSecretRepository.getSecret(privateKeyAlias);
         }
     }
-
 }

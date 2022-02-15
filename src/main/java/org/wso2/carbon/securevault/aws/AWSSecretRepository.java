@@ -48,17 +48,17 @@ public class AWSSecretRepository implements SecretRepository {
      */
     @Override
     public void init(Properties properties, String id) {
-
         secretsClient = AWSSecretManagerClient.getInstance(properties);
     }
 
     /**
-     * Get Secret from AWS Secrets Manager
+     * Get Secret from AWS Secrets Manager.
      *
-     * @param alias Alias name of the secret being retrieved
-     * @return Secret if there is any, otherwise, alias itself
+     * @param alias Name and version of the secret being retrieved separated by a "_". The version is optional.
+     * @return Secret retrieved from the AWS Secrets Manager if there is any, otherwise, alias itself.
      * @see SecretRepository
      */
+    @Override
     public String getSecret(String alias) {
 
         if (StringUtils.isEmpty(alias)) {
@@ -85,31 +85,58 @@ public class AWSSecretRepository implements SecretRepository {
             }
 
         } catch (SecretsManagerException e) {
-            log.error("Error retrieving secret with alias " + alias + " from AWS Secrets Manager Vault");
+            log.error("Error retrieving secret with alias " + alias + " from AWS Secrets Manager Vault.");
             log.error(e.awsErrorDetails().errorMessage());
         }
         return secret;
     }
 
+    /**
+     * Get Encrypted data. This is not supported in this extension.
+     *
+     * @param alias Alias of the secret
+     */
+    @Override
     public String getEncryptedData(String alias) {
 
         throw new UnsupportedOperationException();
     }
 
+    /**
+     * Get parent repository.
+     *
+     * @return Parent repository
+     */
+    @Override
     public SecretRepository getParent() {
 
         return this.parentRepository;
     }
 
+    /**
+     * Set parent repository.
+     *
+     * @param parent Parent secret repository
+     */
+    @Override
     public void setParent(SecretRepository parent) {
 
         this.parentRepository = parent;
     }
 
+    /**
+     * Util method to get the secret name and version.
+     * If no secret version is set, it will return null for versionID,
+     * which will return the latest version of the secret from the AWS Secrets Manager.
+     *
+     * @param alias The alias of the secret.
+     * @return An array with the secret name and the secret version
+     */
     private String[] getSecretVersion(String alias) {
 
         String secretName = alias;
-        String secretVersion = null; //If no secret version is set, it will send the request with null set for versionID which will return the latest version from AWS Secrets Manager
+        String secretVersion = null;
+
         if (alias.contains("_")) {
             int underscoreIndex = alias.indexOf("_");
             secretName = alias.substring(0, underscoreIndex);
