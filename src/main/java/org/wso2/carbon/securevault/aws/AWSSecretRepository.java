@@ -48,6 +48,7 @@ public class AWSSecretRepository implements SecretRepository {
      */
     @Override
     public void init(Properties properties, String id) {
+        log.info("Initializing AWS Secure Vault");
         secretsClient = AWSSecretManagerClient.getInstance(properties);
     }
 
