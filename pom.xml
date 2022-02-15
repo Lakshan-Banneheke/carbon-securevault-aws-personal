@@ -28,7 +28,6 @@
                         <Export-Package>
                             org.wso2.carbon.securevault.aws
                         </Export-Package>
-<!--                        <DynamicImport-Package>*;resolution:=optional</DynamicImport-Package>-->
                         <Import-Package>
                             org.apache.commons.lang;version="${commons-lang.wso2.osgi.version.range}",
                             org.apache.commons.logging;version="${commons-logging.osgi.version.range}",
