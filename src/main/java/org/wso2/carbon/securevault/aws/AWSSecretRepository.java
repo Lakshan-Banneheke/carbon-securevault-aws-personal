@@ -55,7 +55,7 @@ public class AWSSecretRepository implements SecretRepository {
     /**
      * Get Secret from AWS Secrets Manager.
      *
-     * @param alias Name and version of the secret being retrieved separated by a "_". The version is optional.
+     * @param alias Name and version of the secret being retrieved separated by a "#". The version is optional.
      * @return Secret retrieved from the AWS Secrets Manager if there is any, otherwise, alias itself.
      * @see SecretRepository
      */
@@ -138,8 +138,8 @@ public class AWSSecretRepository implements SecretRepository {
         String secretName = alias;
         String secretVersion = null;
 
-        if (alias.contains("_")) {
-            int underscoreIndex = alias.indexOf("_");
+        if (alias.contains("#")) {
+            int underscoreIndex = alias.indexOf("#");
             secretName = alias.substring(0, underscoreIndex);
             secretVersion = alias.substring(underscoreIndex + 1);
             if (log.isDebugEnabled()) {
