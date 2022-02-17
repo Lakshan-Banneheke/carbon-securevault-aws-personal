@@ -1,5 +1,5 @@
 # AWS Secrets Manager based extension for WSO2 Carbon Secure Vault
-#### This extension is to facilitate the integration of the AWS Secrets Manager as a Secure Vault for secret storage within the WSO2 Identity Server.
+#### This extension is to facilitate the integration of AWS Secrets Manager as a Secure Vault for secret storage within the WSO2 Identity Server.
 ***Note: This extension is compatible with WSO2 Identity Server 5.12.0 onwards.***
 
 ## Setting up
@@ -69,7 +69,8 @@ Then append `org-wso2-carbon-securevault-aws` to the `loggers` list in the same 
 ## Using the extension for secret storage and retrieval.
 ## Referencing Deployment Secrets
 
-### Step 1: Open the `deployment.toml` file (`<IS_HOME>/repository/conf/deployment.toml`) and replace the text passwords with an alias in the below mentioned way.
+### Step 1: Replace plain-text passwords with aliases.
+Open the `deployment.toml` file (`<IS_HOME>/repository/conf/deployment.toml`) and replace the plain-text passwords with an alias in the below mentioned way.
 ```
 [super_admin]
 username = "admin"
@@ -98,7 +99,8 @@ file_name = "wso2carbon.jks"
 password = "$secret{keystore-password#9d21179b-cd37-4174-a65a-7d1cea075dcd}"
 ```
 
-### Step 2: Add the following lines to the `deployment.toml` file.
+### Step 2: Enable runtime secrets.
+Add the following lines to the `deployment.toml` file.
 ```
 [runtime_secrets]
 enable = "true"
