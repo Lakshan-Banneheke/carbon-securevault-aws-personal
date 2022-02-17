@@ -98,7 +98,7 @@ file_name = "wso2carbon.jks"
 password = "$secret{keystore-password#9d21179b-cd37-4174-a65a-7d1cea075dcd}"
 ```
 
-#### Step 2: Add the following lines to the `deployment.toml` file.
+### Step 2: Add the following lines to the `deployment.toml` file.
 ```
 [runtime_secrets]
 enable = "true"
@@ -113,7 +113,7 @@ The keystore and private key password must be set when using the server.
 ***Note: If the server is not specifically configured to retrieve these root passwords from the AWS Secrets Manager by following the below steps, 
 it will use the default procedure to retrieve these passwords by either reading from the `password-tmp` or `password-persist` in the `<IS_HOME>` directory or by prompting for manual insertion in the command line.***
 
-#### Step 1: Configuring the Carbon Server to use AWS to retrieve the root passwords.
+### Step 1: Configuring the Carbon Server to use AWS to retrieve the root passwords.
 Set the following configurations in the `secret-conf.properties` file located at `<IS_HOME>/repository/conf/security/secret-conf.properties`.
 
 ```
@@ -141,7 +141,7 @@ secretRepositories.vault.properties.credentialProviders=<Credential_Provider_Typ
 
 The above secrets use the same versioning mechanism as deployment secrets mentioned in the previous step.
 
-#### Step 2: Store the secrets in AWS Secrets Manager.
+### Step 2: Store the secrets in AWS Secrets Manager.
 Log in to AWS Secrets Manager and create secrets using the aliases used above to store the required passwords.
 
 ##### Now you are all set to use the AWS Secrets Manager based extension for WSO2 Carbon Secure Vault 😄
