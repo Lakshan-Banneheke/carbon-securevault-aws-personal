@@ -67,9 +67,9 @@ Then append `org-wso2-carbon-securevault-aws` to the `loggers` list in the same 
    ```
 
 ## Using the extension for secret storage and retrieval.
-### Referencing Deployment Secrets
+## Referencing Deployment Secrets
 
-1. Open the `deployment.toml` file (`<IS_HOME>/repository/conf/deployment.toml`) and replace the text passwords with an alias in the below mentioned way.
+### Step 1: Open the `deployment.toml` file (`<IS_HOME>/repository/conf/deployment.toml`) and replace the text passwords with an alias in the below mentioned way.
 ```
 [super_admin]
 username = "admin"
@@ -98,7 +98,7 @@ file_name = "wso2carbon.jks"
 password = "$secret{keystore-password#9d21179b-cd37-4174-a65a-7d1cea075dcd}"
 ```
 
-2. Add the following lines to the `deployment.toml` file.
+#### Step 2: Add the following lines to the `deployment.toml` file.
 ```
 [runtime_secrets]
 enable = "true"
@@ -106,7 +106,7 @@ enable = "true"
 
 Now the secrets stored in the connected AWS Secrets Manager with the specified secret names and versions will be retrieved and used within the server.
 
-### Setting up Carbon Secure Vault Root Password retrieval
+## Setting up Carbon Secure Vault Root Password retrieval
 
 The keystore and private key password must be set when using the server.
 
