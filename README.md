@@ -7,7 +7,7 @@
 
 1. Clone this project onto your computer or download it as a zip.
 2. Build the OSGi bundle for the extension by running `mvn clean install`.
-3. Copy the `org.wso2.carbon.securevault.aws-1.0.jar` file from the target directory within the project and insert into the `<IS_HOME>/repository/components/dropin/` directory in the WSO2 Identity Server.
+3. Copy the `org.wso2.carbon.securevault.aws-1.0.jar` file from the target directory within the project and insert into the `<IS_HOME>/repository/components/dropins/` directory in the WSO2 Identity Server.
 
 ### Step 2: Configuring the Carbon Server to use the AWS extension for secrets management
 
@@ -29,6 +29,8 @@
    secretRepositories.vault.properties.credentialProviders=<Credential_Provider_Type>
    ```
 
+Set appropriate values for `<AWS_REGION>` and `<Credential_Provider_Type>`.
+
    `<AWS_REGION>` - The region where the AWS Secrets Manager is deployed.
 
    Eg: `secretRepositories.vault.properties.awsregion=us-east-2`
@@ -48,10 +50,14 @@
    
 More than one type can also be used by specifying multiple types comma separated. The extension will build a custom authentication chain in the order of the specified types.
 
-Examples:
+Examples: 
 
 Single credential provider type: `secretRepositories.vault.properties.credentialProviders=env`
 Multiple credential provider types: `secretRepositories.vault.properties.credentialProviders=env,ecs,ec2`
+
+The appropriate environment variables based on the selected credential provider type must be set.
+
+Eg: If `env` is selected, the `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` system environment variables must be set.
 
 ### Step 4: Configuring debug logs.
 Add the following lines to the `<IS_HOME>/repository/conf/log4j2.properties` file
