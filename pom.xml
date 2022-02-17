@@ -26,19 +26,21 @@
                     <instructions>
                         <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
                         <Export-Package>
-                            org.wso2.carbon.securevault.aws,
+                            org.wso2.carbon.securevault.aws
                         </Export-Package>
-<!--                        <DynamicImport-Package>*;resolution:=optional</DynamicImport-Package>-->
                         <Import-Package>
                             org.apache.commons.lang;version="${commons-lang.wso2.osgi.version.range}",
                             org.apache.commons.logging;version="${commons-logging.osgi.version.range}",
-<!--                            TODO Check versioning. It seems to pickup the versions even when defined like this. Didnt pickup the versions in IS 12.0..... Might have to specify the versions as specified in the jars.-->
-                            org.apache.http.client.*,
+
+                            org.apache.http.client.*;version="${httpcomponents-httpclient.osgi.version.range}",
                             org.apache.http.*,
-                            org.wso2.carbon.utils;version="${carbon.kernel.package.import.version.range}",
-                            org.wso2.securevault.keystore;version="${org.wso2.securevault.import.version.range}",
-                            org.wso2.securevault.secret;version="${org.wso2.securevault.import.version.range}"
+
+                            org.wso2.carbon.utils;version="${carbon.kernel.version.range}",
+                            org.wso2.securevault.keystore;version="${org.wso2.securevault.version.range}",
+                            org.wso2.securevault.secret;version="${org.wso2.securevault.version.range}"
                         </Import-Package>
+<!--                    Only the dependencies that are required by the AWS SDK which are not available in the IS are embedded.-->
+<!--                    They are embedded because these dependencies are only required within this extension.-->
                         <Embed-Dependency>
                             secretsmanager,
                             aws-json-protocol,
@@ -61,7 +63,6 @@
                             aws-crt
                         </Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
-                        <_fixupmessages>"Classes found in the wrong directory..."</_fixupmessages>
                     </instructions>
                 </configuration>
             </plugin>
@@ -69,17 +70,13 @@
     </build>
 
     <properties>
-        <carbon.kernel.version>4.6.1</carbon.kernel.version>
-        <carbon.kernel.package.import.version.range>[4.5.0, 5.0.0)</carbon.kernel.package.import.version.range>
+        <carbon.kernel.version.range>[4.6.1,5.0.0)</carbon.kernel.version.range>
 
         <commons-lang.wso2.osgi.version.range>[2.6.0,3.0.0)</commons-lang.wso2.osgi.version.range>
         <commons-logging.osgi.version.range>[1.2.0,2.0.0)</commons-logging.osgi.version.range>
-        <httpcomponents-httpclient.osgi.version.range>[4.3.6, 4.5.13]</httpcomponents-httpclient.osgi.version.range>
-        <httpcomponents-httpcore.osgi.version.range>[4.3.3, 4.4.15]</httpcomponents-httpcore.osgi.version.range>
+        <httpcomponents-httpclient.osgi.version.range>[4.5.13.wso2v1,4.6.0.wso2v1)</httpcomponents-httpclient.osgi.version.range>
 
-
-        <org.wso2.securevault.version>1.1.3</org.wso2.securevault.version>
-        <org.wso2.securevault.import.version.range>[1.1.0, 2.0.0)</org.wso2.securevault.import.version.range>
+        <org.wso2.securevault.version.range>[1.1.3,2.0.0)</org.wso2.securevault.version.range>
 
         <software.amazon.awssdk.version>2.17.124</software.amazon.awssdk.version>
         <software.amazon.awssdk.aws-crt-client.version>${software.amazon.awssdk.version}-PREVIEW</software.amazon.awssdk.aws-crt-client.version>
@@ -104,12 +101,12 @@
         <dependency>
             <groupId>org.wso2.securevault</groupId>
             <artifactId>org.wso2.securevault</artifactId>
-            <version>${org.wso2.securevault.version}</version>
+            <version>${org.wso2.securevault.version.range}</version>
         </dependency>
         <dependency>
             <groupId>org.wso2.carbon</groupId>
             <artifactId>org.wso2.carbon.utils</artifactId>
-            <version>${carbon.kernel.version}</version>
+            <version>${carbon.kernel.version.range}</version>
         </dependency>
         <dependency>
             <groupId>software.amazon.awssdk</groupId>
