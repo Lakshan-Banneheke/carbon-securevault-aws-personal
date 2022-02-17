@@ -1,8 +1,8 @@
 # AWS Secrets Manager based extension for WSO2 Carbon Secure Vault
-####This extension is to facilitate the integration of the AWS Secrets Manager as a Secure Vault for secret storage within the WSO2 Identity Server.
+#### This extension is to facilitate the integration of the AWS Secrets Manager as a Secure Vault for secret storage within the WSO2 Identity Server.
 ***Note: This extension is compatible with WSO2 Identity Server 5.12.0 onwards.***
 
-##Setting up
+## Setting up
 ### Step 1: Building and Integrating the Extension into the Identity Server
 
 1. Clone this project onto your computer or download it as a zip.
@@ -37,7 +37,7 @@ Eg: `secretRepositories.vault.properties.awsregion=us-east-2`
 Valid values are `env`, `ecs`, `ec2`, `default`. These values can be added singularly or comma separate to form an authentication chain in the specified order. This is further explained in Step 3.
 
 
-###Step 3: Setting up AWS Credentials for authentication
+### Step 3: Setting up AWS Credentials for authentication
 
 The credential provider type for authentication into AWS can be set by the `<Credential_Provider_Type>` as mentioned above.
 
@@ -53,7 +53,7 @@ Examples:
 Single credential provider type: `secretRepositories.vault.properties.credentialProviders=env`
 Multiple credential provider types: `secretRepositories.vault.properties.credentialProviders=env,ecs,ec2`
 
-###Step 4: Configuring debug logs.
+### Step 4: Configuring debug logs.
 Add the following lines to the `<IS_HOME>/repository/conf/log4j2.properties` file
 ```
 logger.org-wso2-carbon-securevault-aws.name=org.wso2.carbon.securevault.aws
@@ -66,7 +66,7 @@ Then append `org-wso2-carbon-securevault-aws` to the `loggers` list in the same 
    loggers = AUDIT_LOG, trace-messages, ... ,org-wso2-carbon-securevault-aws
    ```
 
-##Using the extension for secret storage and retrieval.
+## Using the extension for secret storage and retrieval.
 ### Referencing Deployment Secrets
 
 1. Open the `deployment.toml` file (`<IS_HOME>/repository/conf/deployment.toml`) and replace the text passwords with an alias in the below mentioned way.
@@ -87,7 +87,7 @@ type="JKS"
 ```
 The alias (eg: `admin-password`) is the name of the secret that is stored in the AWS Secrets Manager. 
 
-####Retrieving versions of secrets
+#### Retrieving versions of secrets
 Using the alias without specifying a version as shown above will retrieve the latest version of the secret. 
 
 In order to retrieve a specific version of a secret, the `versionID` has to be mentioned after the alias separated by a `#` as shown below.
@@ -113,7 +113,7 @@ The keystore and private key password must be set when using the server.
 ***Note: If the server is not specifically configured to retrieve these root passwords from the AWS Secrets Manager by following the below steps, 
 it will use the default procedure to retrieve these passwords by either reading from the `password-tmp` or `password-persist` in the `<IS_HOME>` directory or by prompting for manual insertion in the command line.***
 
-####Step 1: Configuring the Carbon Server to use AWS to retrieve the root passwords.
+#### Step 1: Configuring the Carbon Server to use AWS to retrieve the root passwords.
 Set the following configurations in the `secret-conf.properties` file located at `<IS_HOME>/repository/conf/security/secret-conf.properties`.
 
 ```
@@ -141,7 +141,7 @@ secretRepositories.vault.properties.credentialProviders=<Credential_Provider_Typ
 
 The above secrets use the same versioning mechanism as deployment secrets mentioned in the previous step.
 
-####Step 2: Store the secrets in AWS Secrets Manager.
+#### Step 2: Store the secrets in AWS Secrets Manager.
 Log in to AWS Secrets Manager and create secrets using the aliases used above to store the required passwords.
 
-#####Now you are all set to use the AWS Secrets Manager based extension for WSO2 Carbon Secure Vault 😄
+##### Now you are all set to use the AWS Secrets Manager based extension for WSO2 Carbon Secure Vault 😄
