@@ -53,6 +53,7 @@ More than one type can also be used by specifying multiple types comma separated
 Examples: 
 
 Single credential provider type: `secretRepositories.vault.properties.credentialProviders=env`
+
 Multiple credential provider types: `secretRepositories.vault.properties.credentialProviders=env,ecs,ec2`
 
 The appropriate environment variables based on the selected credential provider type must be set.
