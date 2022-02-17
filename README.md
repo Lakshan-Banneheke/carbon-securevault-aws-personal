@@ -11,35 +11,35 @@
 
 ### Step 2: Configuring the Carbon Server to use the AWS extension for secrets management
 
-Set the following configurations in the `secret-conf.properties` file located at `<IS_HOME>/repository/conf/security/secret-conf.properties`.
+   Set the following configurations in the `secret-conf.properties` file located at `<IS_HOME>/repository/conf/security/secret-conf.properties`.
 
-```
-keystore.identity.location=repository/resources/security/wso2carbon.jks
-keystore.identity.type=JKS
-keystore.identity.store.password=identity.store.password
-keystore.identity.store.secretProvider=org.wso2.carbon.securevault.DefaultSecretCallbackHandler
-keystore.identity.key.password=identity.key.password
-keystore.identity.key.secretProvider=org.wso2.carbon.securevault.DefaultSecretCallbackHandler
-carbon.secretProvider=org.wso2.securevault.secret.handler.SecretManagerSecretCallbackHandler
+   ```
+   keystore.identity.location=repository/resources/security/wso2carbon.jks
+   keystore.identity.type=JKS
+   keystore.identity.store.password=identity.store.password
+   keystore.identity.store.secretProvider=org.wso2.carbon.securevault.DefaultSecretCallbackHandler
+   keystore.identity.key.password=identity.key.password
+   keystore.identity.key.secretProvider=org.wso2.carbon.securevault.DefaultSecretCallbackHandler
+   carbon.secretProvider=org.wso2.securevault.secret.handler.SecretManagerSecretCallbackHandler
 
-secVault.enabled=true
-secretRepositories=vault
-secretRepositories.vault.provider=org.wso2.carbon.securevault.aws.AWSSecretRepositoryProvider
-secretRepositories.vault.properties.awsregion=<AWS_Region>
-secretRepositories.vault.properties.credentialProviders=<Credential_Provider_Type>
-```
+   secVault.enabled=true
+   secretRepositories=vault
+   secretRepositories.vault.provider=org.wso2.carbon.securevault.aws.AWSSecretRepositoryProvider
+   secretRepositories.vault.properties.awsregion=<AWS_Region>
+   secretRepositories.vault.properties.credentialProviders=<Credential_Provider_Type>
+   ```
 
-`<AWS_REGION>` - The region where the AWS Secrets Manager is deployed.
+   `<AWS_REGION>` - The region where the AWS Secrets Manager is deployed.
 
-Eg: `secretRepositories.vault.properties.awsregion=us-east-2`
+   Eg: `secretRepositories.vault.properties.awsregion=us-east-2`
 
-`<Credential_Provider_Type>` - Specify the credential provider type to be used to authenticate the user into AWS.
-Valid values are `env`, `ecs`, `ec2`, `default`. These values can be added singularly or comma separate to form an authentication chain in the specified order. This is further explained in Step 3.
+   `<Credential_Provider_Type>` - Specify the credential provider type to be used to authenticate the user into AWS.
+   Valid values are `env`, `ecs`, `ec2`, `default`. These values can be added singularly or comma separate to form an authentication chain in the specified order. This is further explained in Step 3.
 
 
 ### Step 3: Setting up AWS Credentials for authentication
 
-The credential provider type for authentication into AWS can be set by the `<Credential_Provider_Type>` as mentioned above.
+   The credential provider type for authentication into AWS can be set by the `<Credential_Provider_Type>` as mentioned above.
 
 1. `env` - It uses the [EnvironmentVariableCredentialsProvider](https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/auth/credentials/EnvironmentVariableCredentialsProvider.html) class to load credentials from the AWS_ACCESS_KEY_ID and AWS_SECRET_ACCESS_KEY system environment variables.
 2. `ecs` - It uses the [ContainerCredentialsProvider](https://sdk.amazonaws.com/java/api/latest/software/amazon/awssdk/auth/credentials/ContainerCredentialsProvider.html) class to load credentials from a local metadata service using the AWS_CONTAINER_CREDENTIALS_RELATIVE_URI system environment variable.
