@@ -22,6 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.securevault.secret.SecretRepository;
+import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRequest;
 import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueResponse;
@@ -88,6 +89,9 @@ public class AWSSecretRepository implements SecretRepository {
         } catch (SecretsManagerException e) {
             log.error("Error retrieving secret with alias " + alias + " from AWS Secrets Manager Vault.");
             log.error(e.awsErrorDetails().errorMessage());
+        } catch (SdkClientException e) {
+            log.error("Error establishing connection to AWS");
+            log.error(e.getMessage());
         }
         return secret;
     }
