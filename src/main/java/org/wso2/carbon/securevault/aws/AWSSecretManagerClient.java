@@ -52,8 +52,8 @@ public class AWSSecretManagerClient {
      * Get the instance of the AWS SecretsManagerClient.
      * If one has not yet been created, the method will create a client and return it.
      *
-     * @param properties Configuration properties
-     * @return AWS Secrets Manager Client instance
+     * @param properties Configuration properties.
+     * @return AWS Secrets Manager Client instance.
      */
     public static SecretsManagerClient getInstance(Properties properties) {
 
@@ -81,9 +81,9 @@ public class AWSSecretManagerClient {
     /**
      * Method to get the AWS Region from the properties file.
      *
-     * @param properties Configuration properties
-     * @return The AWS Region
-     * @throws AWSVaultException if the AWS Region is not set in the properties file or if it is invalid.
+     * @param properties Configuration properties.
+     * @return The AWS Region.
+     * @throws AWSVaultException If the AWS Region is not set in the properties file or if it is invalid.
      */
     private static Region getAWSRegion(Properties properties) throws AWSVaultException {
 
@@ -105,7 +105,7 @@ public class AWSSecretManagerClient {
      *
      * @param properties Configuration properties
      * @return AwsCredentialsProvider
-     * @throws AWSVaultException if the provider types are not specified or invalid.
+     * @throws AWSVaultException If the provider types are not specified or invalid.
      */
     private static AwsCredentialsProvider getCredentialsProvider(Properties properties) throws AWSVaultException {
 

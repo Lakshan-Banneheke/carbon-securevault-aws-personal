@@ -45,7 +45,7 @@ public class AWSSecretCallbackHandler extends AbstractSecretCallbackHandler {
     /**
      * Handles single secret callback.
      *
-     * @param singleSecretCallback a single secret callback
+     * @param singleSecretCallback A single secret callback.
      */
     @Override
     protected void handleSingleSecretCallback(SingleSecretCallback singleSecretCallback) {
@@ -74,8 +74,8 @@ public class AWSSecretCallbackHandler extends AbstractSecretCallbackHandler {
     /**
      * Reads keystore and primary key passwords from AWS Vault.
      *
-     * @param sameKeyAndKeyStorePass flag to indicate whether the keystore and primary key passwords are the same
-     * @throws AWSVaultException if there are errors in loading configurations from the config file
+     * @param sameKeyAndKeyStorePass Flag to indicate whether the keystore and primary key passwords are the same.
+     * @throws AWSVaultException If there are errors in loading configurations from the config file.
      */
     private void readPassword(boolean sameKeyAndKeyStorePass) throws AWSVaultException {
 

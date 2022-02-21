@@ -44,8 +44,8 @@ public class AWSSecretRepository implements SecretRepository {
     /**
      * Initializes the AWS Secret repository based on provided properties.
      *
-     * @param properties Configuration properties
-     * @param id         Identifier to identify properties related to the corresponding repository
+     * @param properties Configuration properties.
+     * @param id         Identifier to identify properties related to the corresponding repository.
      */
     @Override
     public void init(Properties properties, String id) {
@@ -99,7 +99,7 @@ public class AWSSecretRepository implements SecretRepository {
     /**
      * Get Encrypted data. This is not supported in this extension.
      *
-     * @param alias Alias of the secret
+     * @param alias Alias of the secret.
      */
     @Override
     public String getEncryptedData(String alias) {
@@ -110,7 +110,7 @@ public class AWSSecretRepository implements SecretRepository {
     /**
      * Get parent repository.
      *
-     * @return Parent repository
+     * @return Parent repository.
      */
     @Override
     public SecretRepository getParent() {
@@ -121,7 +121,7 @@ public class AWSSecretRepository implements SecretRepository {
     /**
      * Set parent repository.
      *
-     * @param parent Parent secret repository
+     * @param parent Parent secret repository.
      */
     @Override
     public void setParent(SecretRepository parent) {
@@ -135,7 +135,7 @@ public class AWSSecretRepository implements SecretRepository {
      * which will return the latest version of the secret from the AWS Secrets Manager.
      *
      * @param alias The alias of the secret.
-     * @return An array with the secret name and the secret version
+     * @return An array with the secret name and the secret version.
      */
     private String[] getSecretVersion(String alias) {
 
