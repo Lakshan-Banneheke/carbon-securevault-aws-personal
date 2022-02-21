@@ -31,7 +31,7 @@ import software.amazon.awssdk.services.secretsmanager.model.SecretsManagerExcept
 import java.util.Properties;
 
 /**
- * AWS Secret Repository.
+ * AWS secret repository.
  */
 public class AWSSecretRepository implements SecretRepository {
 

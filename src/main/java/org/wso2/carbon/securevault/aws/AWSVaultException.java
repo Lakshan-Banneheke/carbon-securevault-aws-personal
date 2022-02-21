@@ -19,7 +19,7 @@
 package org.wso2.carbon.securevault.aws;
 
 /**
- * AWS Vault Exception.
+ * AWS Vault exception.
  */
 public class AWSVaultException extends Exception {
 

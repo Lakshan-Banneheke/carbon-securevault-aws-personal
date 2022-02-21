@@ -24,7 +24,7 @@ import org.wso2.securevault.secret.SecretRepository;
 import org.wso2.securevault.secret.SecretRepositoryProvider;
 
 /**
- * AWS Secret Repository Provider.
+ * AWS secret repository provider.
  */
 public class AWSSecretRepositoryProvider implements SecretRepositoryProvider {
 
