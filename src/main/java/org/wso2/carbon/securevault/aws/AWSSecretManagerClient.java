@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Properties;
 
 import static org.wso2.carbon.securevault.aws.AWSVaultConstants.AWS_REGION_PARAMETER;
+import static org.wso2.carbon.securevault.aws.AWSVaultConstants.COMMA;
 import static org.wso2.carbon.securevault.aws.AWSVaultConstants.CREDENTIAL_PROVIDERS;
 
 /**
@@ -46,7 +47,9 @@ public class AWSSecretManagerClient {
 
     private static volatile SecretsManagerClient secretsClient;
 
-    private AWSSecretManagerClient(){}
+    private AWSSecretManagerClient() {
+
+    }
 
     /**
      * Get the instance of the AWS SecretsManagerClient.
@@ -114,8 +117,8 @@ public class AWSSecretManagerClient {
         String[] credentialProviderTypes;
 
         if (StringUtils.isNotEmpty(credentialProvidersString)) {
-            if (credentialProvidersString.contains(",")) {
-                credentialProviderTypes = credentialProvidersString.split(",");
+            if (credentialProvidersString.contains(COMMA)) {
+                credentialProviderTypes = credentialProvidersString.split(COMMA);
             } else {
                 credentialProviderTypes = new String[]{credentialProvidersString};
             }
