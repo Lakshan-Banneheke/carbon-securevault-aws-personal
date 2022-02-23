@@ -30,6 +30,8 @@ import software.amazon.awssdk.services.secretsmanager.model.SecretsManagerExcept
 
 import java.util.Properties;
 
+import static org.wso2.carbon.securevault.aws.AWSVaultConstants.DELIMITER;
+
 /**
  * AWS secret repository.
  */
@@ -49,6 +51,7 @@ public class AWSSecretRepository implements SecretRepository {
      */
     @Override
     public void init(Properties properties, String id) {
+
         log.info("Initializing AWS Secure Vault");
         secretsClient = AWSSecretManagerClient.getInstance(properties);
     }
@@ -143,11 +146,11 @@ public class AWSSecretRepository implements SecretRepository {
         String secretVersion = null;
 
         /*
-         * Alias contains both the name and version of the secret being retrieved, separated by a "#".
+         * Alias contains both the name and version of the secret being retrieved, separated by a "#" delimiter.
          * The version is optional and can be left blank.
          */
-        if (alias.contains("#")) {
-            int underscoreIndex = alias.indexOf("#");
+        if (alias.contains(DELIMITER)) {
+            int underscoreIndex = alias.indexOf(DELIMITER);
             secretName = alias.substring(0, underscoreIndex);
             secretVersion = alias.substring(underscoreIndex + 1);
             if (log.isDebugEnabled()) {

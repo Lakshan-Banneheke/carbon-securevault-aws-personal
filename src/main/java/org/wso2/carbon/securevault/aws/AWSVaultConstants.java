@@ -36,4 +36,6 @@ public class AWSVaultConstants {
     public static final String IDENTITY_KEY_PASSWORD_ALIAS = "keystore.identity.key.alias";
     public static final String CREDENTIAL_PROVIDERS = "secretRepositories.vault.properties.credentialProviders";
     public static final String COMMA = ",";
+    public static final String DELIMITER = "#";
+
 }
