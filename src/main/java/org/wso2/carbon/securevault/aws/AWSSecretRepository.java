@@ -38,7 +38,7 @@ public class AWSSecretRepository implements SecretRepository {
     private static final Log log = LogFactory.getLog(AWSSecretRepository.class);
 
     private SecretRepository parentRepository;
-    // Secret Client used to retrieve secrets from AWS Secrets Manager Vault
+    // Secret Client used to retrieve secrets from AWS Secrets Manager Vault.
     private SecretsManagerClient secretsClient;
 
     /**
@@ -83,14 +83,14 @@ public class AWSSecretRepository implements SecretRepository {
             secret = valueResponse.secretString();
 
             if (log.isDebugEnabled()) {
-                log.debug("Secret " + secretName + " is retrieved");
+                log.debug("Secret " + secretName + " is retrieved.");
             }
 
         } catch (SecretsManagerException e) {
             log.error("Error retrieving secret with alias " + alias + " from AWS Secrets Manager Vault.");
             log.error(e.awsErrorDetails().errorMessage());
         } catch (SdkClientException e) {
-            log.error("Error establishing connection to AWS");
+            log.error("Error establishing connection to AWS.");
             log.error(e.getMessage());
         }
         return secret;
@@ -142,6 +142,10 @@ public class AWSSecretRepository implements SecretRepository {
         String secretName = alias;
         String secretVersion = null;
 
+        /*
+         * Alias contains both the name and version of the secret being retrieved, separated by a "#".
+         * The version is optional and can be left blank.
+         */
         if (alias.contains("#")) {
             int underscoreIndex = alias.indexOf("#");
             secretName = alias.substring(0, underscoreIndex);

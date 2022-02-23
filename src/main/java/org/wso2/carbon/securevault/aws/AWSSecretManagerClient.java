@@ -70,8 +70,7 @@ public class AWSSecretManagerClient {
                                 .region(region)
                                 .credentialsProvider(credentialsProvider)
                                 .build();
-                        log.info("AWS Secrets Client created");
-
+                        log.info("AWS Secrets Client created.");
                     } catch (AWSVaultException e) {
                         log.error(e.getMessage(), e);
                     }
@@ -106,8 +105,8 @@ public class AWSSecretManagerClient {
      * Method to get the AWS Credential Provider Chain based on the configuration in the config file.
      * If new credential provider types are needed to be added, add a new mapping in the switch statement.
      *
-     * @param properties Configuration properties
-     * @return AwsCredentialsProvider
+     * @param properties Configuration properties.
+     * @return AwsCredentialsProvider.
      * @throws AWSVaultException If the provider types are not specified or invalid.
      */
     private static AwsCredentialsProvider getCredentialsProvider(Properties properties) throws AWSVaultException {
