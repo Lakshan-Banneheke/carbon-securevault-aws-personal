@@ -56,11 +56,8 @@ public class AWSSecretCallbackHandler extends AbstractSecretCallbackHandler {
             if (keyPassword != null && keyPassword.trim().equals("true")) {
                 sameKeyAndKeyStorePass = false;
             }
-            try {
-                readPassword(sameKeyAndKeyStorePass);
-            } catch (AWSVaultException e) {
-                log.error(e.getMessage(), e);
-            }
+            readPassword(sameKeyAndKeyStorePass);
+
         }
 
         if (singleSecretCallback.getId().equals("identity.key.password")) {
@@ -75,9 +72,8 @@ public class AWSSecretCallbackHandler extends AbstractSecretCallbackHandler {
      * Reads keystore and primary key passwords from AWS Vault.
      *
      * @param sameKeyAndKeyStorePass Flag to indicate whether the keystore and primary key passwords are the same.
-     * @throws AWSVaultException If there are errors in loading configurations from the config file.
      */
-    private void readPassword(boolean sameKeyAndKeyStorePass) throws AWSVaultException {
+    private void readPassword(boolean sameKeyAndKeyStorePass) {
 
         if (log.isDebugEnabled()) {
             log.debug("Reading configuration properties from file.");
@@ -89,18 +85,18 @@ public class AWSSecretCallbackHandler extends AbstractSecretCallbackHandler {
             properties.load(inputStream);
 
         } catch (IOException e) {
-            throw new AWSVaultException("Error while loading configurations from " + CONFIG_FILE_PATH);
+            throw new AWSSecretCallbackHandlerException("Error loading configurations from " + CONFIG_FILE_PATH, e);
         }
 
         String keyStoreAlias = properties.getProperty(IDENTITY_STORE_PASSWORD_ALIAS);
         String privateKeyAlias = properties.getProperty(IDENTITY_KEY_PASSWORD_ALIAS);
 
         if (StringUtils.isEmpty(keyStoreAlias)) {
-            throw new AWSVaultException("keystore.identity.store.alias property has not been set. " +
-                    "Unable to retrieve root keystore password from AWS Secrets Manager.");
+            throw new AWSSecretCallbackHandlerException("keystore.identity.store.alias property has not been set. " +
+                    "Unable to retrieve root keystore password from AWS Secrets Manager. ");
         } else if (StringUtils.isEmpty(privateKeyAlias) && !sameKeyAndKeyStorePass) {
-            throw new AWSVaultException("keystore.identity.key.alias property has not been set. " +
-                    "Unable to retrieve root private key from AWS Secrets Manager.");
+            throw new AWSSecretCallbackHandlerException("keystore.identity.key.alias property has not been set. " +
+                    "Unable to retrieve root private key from AWS Secrets Manager. ");
         }
 
         AWSSecretRepository awsSecretRepository = new AWSSecretRepository();
