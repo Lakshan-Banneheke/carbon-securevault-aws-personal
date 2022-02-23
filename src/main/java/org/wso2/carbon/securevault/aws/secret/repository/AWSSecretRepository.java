@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.wso2.carbon.securevault.aws;
+package org.wso2.carbon.securevault.aws.secret.repository;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
@@ -30,7 +30,7 @@ import software.amazon.awssdk.services.secretsmanager.model.SecretsManagerExcept
 
 import java.util.Properties;
 
-import static org.wso2.carbon.securevault.aws.AWSVaultConstants.DELIMITER;
+import static org.wso2.carbon.securevault.aws.common.AWSVaultConstants.DELIMITER;
 
 /**
  * AWS secret repository.

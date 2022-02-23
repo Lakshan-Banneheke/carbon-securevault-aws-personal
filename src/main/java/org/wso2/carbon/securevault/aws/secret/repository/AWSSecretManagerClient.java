@@ -16,11 +16,12 @@
  * under the License.
  */
 
-package org.wso2.carbon.securevault.aws;
+package org.wso2.carbon.securevault.aws.secret.repository;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.securevault.aws.exception.AWSVaultException;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.AwsCredentialsProviderChain;
 import software.amazon.awssdk.auth.credentials.ContainerCredentialsProvider;
@@ -34,9 +35,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import static org.wso2.carbon.securevault.aws.AWSVaultConstants.AWS_REGION_PARAMETER;
-import static org.wso2.carbon.securevault.aws.AWSVaultConstants.COMMA;
-import static org.wso2.carbon.securevault.aws.AWSVaultConstants.CREDENTIAL_PROVIDERS;
+import static org.wso2.carbon.securevault.aws.common.AWSVaultConstants.AWS_REGION_PARAMETER;
+import static org.wso2.carbon.securevault.aws.common.AWSVaultConstants.COMMA;
+import static org.wso2.carbon.securevault.aws.common.AWSVaultConstants.CREDENTIAL_PROVIDERS;
 
 /**
  * Provides an instance of the secrets client that connects to the AWS Secrets Manager.
@@ -63,17 +64,13 @@ public class AWSSecretManagerClient {
         if (secretsClient == null) {
             synchronized (AWSSecretManagerClient.class) {
                 if (secretsClient == null) {
-                    try {
-                        Region region = getAWSRegion(properties);
-                        AwsCredentialsProvider credentialsProvider = getCredentialsProvider(properties);
-                        secretsClient = SecretsManagerClient.builder()
-                                .region(region)
-                                .credentialsProvider(credentialsProvider)
-                                .build();
-                        log.info("AWS Secrets Client created.");
-                    } catch (AWSVaultException e) {
-                        log.error(e.getMessage(), e);
-                    }
+                    Region region = getAWSRegion(properties);
+                    AwsCredentialsProvider credentialsProvider = getCredentialsProvider(properties);
+                    secretsClient = SecretsManagerClient.builder()
+                            .region(region)
+                            .credentialsProvider(credentialsProvider)
+                            .build();
+                    log.info("AWS Secrets Client created.");
                 }
             }
         }

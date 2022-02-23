@@ -16,11 +16,13 @@
  * under the License.
  */
 
-package org.wso2.carbon.securevault.aws;
+package org.wso2.carbon.securevault.aws.secret.handler;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.securevault.aws.exception.AWSSecretCallbackHandlerException;
+import org.wso2.carbon.securevault.aws.secret.repository.AWSSecretRepository;
 import org.wso2.securevault.secret.AbstractSecretCallbackHandler;
 import org.wso2.securevault.secret.SingleSecretCallback;
 
@@ -29,9 +31,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import static org.wso2.carbon.securevault.aws.AWSVaultConstants.CONFIG_FILE_PATH;
-import static org.wso2.carbon.securevault.aws.AWSVaultConstants.IDENTITY_KEY_PASSWORD_ALIAS;
-import static org.wso2.carbon.securevault.aws.AWSVaultConstants.IDENTITY_STORE_PASSWORD_ALIAS;
+import static org.wso2.carbon.securevault.aws.common.AWSVaultConstants.CONFIG_FILE_PATH;
+import static org.wso2.carbon.securevault.aws.common.AWSVaultConstants.IDENTITY_KEY_PASSWORD_ALIAS;
+import static org.wso2.carbon.securevault.aws.common.AWSVaultConstants.IDENTITY_STORE_PASSWORD_ALIAS;
 
 /**
  * Secret Callback handler class if keystore and primary key passwords are stored in the AWS Vault.

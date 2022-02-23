@@ -16,21 +16,15 @@
  * under the License.
  */
 
-package org.wso2.carbon.securevault.aws;
+package org.wso2.carbon.securevault.aws.exception;
 
 /**
- * AWS secret callback handler exception.
+ * AWS Vault exception.
  */
-public class AWSSecretCallbackHandlerException extends RuntimeException {
+public class AWSVaultException extends RuntimeException {
 
-    public AWSSecretCallbackHandlerException(String message) {
+    public AWSVaultException(String message) {
 
         super(message);
     }
-
-    public AWSSecretCallbackHandlerException(String message, Throwable cause) {
-
-        super(message, cause);
-    }
-
 }

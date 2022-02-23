@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.wso2.carbon.securevault.aws;
+package org.wso2.carbon.securevault.aws.common;
 
 import org.wso2.carbon.utils.CarbonUtils;
 

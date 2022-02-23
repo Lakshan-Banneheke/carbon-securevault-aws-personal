@@ -24,7 +24,7 @@
 
    secVault.enabled=true
    secretRepositories=vault
-   secretRepositories.vault.provider=org.wso2.carbon.securevault.aws.AWSSecretRepositoryProvider
+   secretRepositories.vault.provider=org.wso2.carbon.securevault.aws.secret.repository.AWSSecretRepositoryProvider
    secretRepositories.vault.properties.awsregion=<AWS_Region>
    secretRepositories.vault.properties.credentialProviders=<Credential_Provider_Type>
    ```
@@ -129,16 +129,16 @@ Set the following configurations in the `secret-conf.properties` file located at
 keystore.identity.location=repository/resources/security/wso2carbon.jks
 keystore.identity.type=JKS
 keystore.identity.store.password=identity.store.password
-keystore.identity.store.secretProvider=org.wso2.carbon.securevault.aws.AWSSecretCallbackHandler
+keystore.identity.store.secretProvider=org.wso2.carbon.securevault.aws.secret.handler.AWSSecretCallbackHandler
 keystore.identity.key.password=identity.key.password
-keystore.identity.key.secretProvider=org.wso2.carbon.securevault.aws.AWSSecretCallbackHandler
+keystore.identity.key.secretProvider=org.wso2.carbon.securevault.aws.secret.handler.AWSSecretCallbackHandler
 carbon.secretProvider=org.wso2.securevault.secret.handler.SecretManagerSecretCallbackHandler
 keystore.identity.store.alias=<identity-keystore-password-alias>
 keystore.identity.key.alias=<private-key-alias>
 
 secVault.enabled=true
 secretRepositories=vault
-secretRepositories.vault.provider=org.wso2.carbon.securevault.aws.AWSSecretRepositoryProvider
+secretRepositories.vault.provider=org.wso2.carbon.securevault.aws.secret.repository.AWSSecretRepositoryProvider
 secretRepositories.vault.properties.awsregion=<AWS_REGION>
 secretRepositories.vault.properties.credentialProviders=<Credential_Provider_Type>
 ```
