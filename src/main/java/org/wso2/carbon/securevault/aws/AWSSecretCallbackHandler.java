@@ -57,7 +57,6 @@ public class AWSSecretCallbackHandler extends AbstractSecretCallbackHandler {
                 sameKeyAndKeyStorePass = false;
             }
             readPassword(sameKeyAndKeyStorePass);
-
         }
 
         if (singleSecretCallback.getId().equals("identity.key.password")) {
