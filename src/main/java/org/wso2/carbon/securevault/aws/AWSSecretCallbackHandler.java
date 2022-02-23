@@ -50,7 +50,7 @@ public class AWSSecretCallbackHandler extends AbstractSecretCallbackHandler {
     @Override
     protected void handleSingleSecretCallback(SingleSecretCallback singleSecretCallback) {
 
-        if (keyStorePassword == null && privateKeyPassword == null) {
+        if (StringUtils.isEmpty(keyStorePassword) && StringUtils.isEmpty(privateKeyPassword)) {
             boolean sameKeyAndKeyStorePass = true;
             String keyPassword = System.getProperty("key.password");
             if (keyPassword != null && keyPassword.trim().equals("true")) {
