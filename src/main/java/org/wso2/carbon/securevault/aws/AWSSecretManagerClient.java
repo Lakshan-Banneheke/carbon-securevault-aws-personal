@@ -137,12 +137,8 @@ public class AWSSecretManagerClient {
                         awsCredentialsProviders.add(DefaultCredentialsProvider.create());
                         break;
                     default:
-                        log.warn("Unknown credential type " + credentialType);
+                        throw new AWSVaultException("Credential provider type " + credentialType + " is invalid. ");
                 }
-            }
-
-            if (awsCredentialsProviders.isEmpty()) {
-                throw new AWSVaultException("All credential providers specified in the config file are invalid. ");
             }
 
         } else {
