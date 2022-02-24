@@ -185,7 +185,6 @@
                 <version>${software.amazon.awssdk.version}</version>
                 <type>pom</type>
             </dependency>
-
         </dependencies>
     </dependencyManagement>
 
