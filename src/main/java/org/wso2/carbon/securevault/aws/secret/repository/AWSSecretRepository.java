@@ -38,6 +38,7 @@ import static org.wso2.carbon.securevault.aws.common.AWSVaultConstants.DELIMITER
 public class AWSSecretRepository implements SecretRepository {
 
     private static final Log log = LogFactory.getLog(AWSSecretRepository.class);
+    public static final String REGEX = "[\r\n]";
 
     private SecretRepository parentRepository;
     // Secret Client used to retrieve secrets from AWS Secrets Manager Vault.
@@ -86,15 +87,16 @@ public class AWSSecretRepository implements SecretRepository {
             secret = valueResponse.secretString();
 
             if (log.isDebugEnabled()) {
-                log.debug("Secret " + secretName + " is retrieved.");
+                log.debug("Secret " + secretName.replaceAll(REGEX, "") + " is retrieved.");
             }
 
         } catch (SecretsManagerException e) {
-            log.error("Error retrieving secret with alias " + alias + " from AWS Secrets Manager Vault.");
-            log.error(e.awsErrorDetails().errorMessage());
+            log.error("Error retrieving secret with alias " + alias.replaceAll(REGEX, "") +
+                    " from AWS Secrets Manager Vault.");
+            log.error(e.awsErrorDetails().errorMessage().replaceAll(REGEX, ""));
         } catch (SdkClientException e) {
             log.error("Error establishing connection to AWS.");
-            log.error(e.getMessage());
+            log.error(e.getMessage().replaceAll(REGEX, ""));
         }
         return secret;
     }
@@ -154,11 +156,13 @@ public class AWSSecretRepository implements SecretRepository {
             secretName = alias.substring(0, underscoreIndex);
             secretVersion = alias.substring(underscoreIndex + 1);
             if (log.isDebugEnabled()) {
-                log.debug("Secret version found for " + secretName + ". Retrieving the specified version of secret.");
+                log.debug("Secret version found for " + secretName.replaceAll(REGEX, "") + "." +
+                        " Retrieving the specified version of secret.");
             }
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("Secret version not found for " + secretName + ". Retrieving latest version of secret.");
+                log.debug("Secret version not found for " + secretName.replaceAll(REGEX, "") +
+                        ". Retrieving latest version of secret.");
             }
         }
         return new String[]{secretName, secretVersion};
