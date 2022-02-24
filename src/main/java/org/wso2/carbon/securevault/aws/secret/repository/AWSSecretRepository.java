@@ -21,6 +21,7 @@ package org.wso2.carbon.securevault.aws.secret.repository;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.securevault.aws.common.AWSSecretManagerClient;
 import org.wso2.securevault.secret.SecretRepository;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
