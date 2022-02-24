@@ -18,6 +18,7 @@
 
 package org.wso2.carbon.securevault.aws.secret.handler;
 
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -74,6 +75,7 @@ public class AWSSecretCallbackHandler extends AbstractSecretCallbackHandler {
      *
      * @param sameKeyAndKeyStorePass Flag to indicate whether the keystore and primary key passwords are the same.
      */
+    @SuppressFBWarnings("PATH_TRAVERSAL_IN")
     private void readPassword(boolean sameKeyAndKeyStorePass) {
 
         if (log.isDebugEnabled()) {

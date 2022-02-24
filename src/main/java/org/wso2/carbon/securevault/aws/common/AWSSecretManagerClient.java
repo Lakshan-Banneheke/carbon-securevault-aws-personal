@@ -16,7 +16,7 @@
  * under the License.
  */
 
-package org.wso2.carbon.securevault.aws.secret.repository;
+package org.wso2.carbon.securevault.aws.common;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
