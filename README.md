@@ -12,7 +12,28 @@
 ### Step 2: Configuring the Carbon Server to use the AWS extension for secrets management
 
    Set the following configurations in the `secret-conf.properties` file located at `<IS_HOME>/repository/conf/security/secret-conf.properties`.
+   Use either of the two methods given below.
 
+#### Novel method for using multiple vault secret repositories
+```
+   keystore.identity.location=repository/resources/security/wso2carbon.jks
+   keystore.identity.type=JKS
+   keystore.identity.store.password=identity.store.password
+   keystore.identity.store.secretProvider=org.wso2.carbon.securevault.DefaultSecretCallbackHandler
+   keystore.identity.key.password=identity.key.password
+   keystore.identity.key.secretProvider=org.wso2.carbon.securevault.DefaultSecretCallbackHandler
+   carbon.secretProvider=org.wso2.securevault.secret.handler.SecretManagerSecretCallbackHandler
+
+   secVault.enabled=true
+   secretProviders=vault
+   secretProviders.vault.provider=org.wso2.securevault.secret.repository.VaultSecretRepositoryProvider
+   secretProviders.vault.repositories=aws,<Other repositories if any>
+   secretProviders.vault.repositories.aws=org.wso2.carbon.securevault.aws.secret.repository.AWSSecretRepository
+   secretProviders.vault.repositories.aws.properties.awsregion=<AWS_Region>
+   secretProviders.vault.repositories.aws.properties.credentialProviders=<Credential_Provider_Type>
+```
+
+#### Legacy method for using a single vault secret repository
    ```
    keystore.identity.location=repository/resources/security/wso2carbon.jks
    keystore.identity.type=JKS
@@ -78,6 +99,8 @@ Then append `org-wso2-carbon-securevault-aws` to the `loggers` list in the same 
 
 ### Step 1: Replace plain-text passwords with aliases.
 Open the `deployment.toml` file (`<IS_HOME>/repository/conf/deployment.toml`) and replace the plain-text passwords with an alias in the below mentioned way.
+
+#### When using a single secret repository
 ```
 [super_admin]
 username = "admin"
@@ -93,7 +116,15 @@ file_name="client-truststore.jks"
 password="$secret{truststore-password}"
 type="JKS"
 ```
+
+#### When using multiple secret repositories
+The secret should be referenced as;
+```
+"$secret{vault:aws:admin-password}"
+```
+
 The alias (eg: `admin-password`) is the name of the secret that is stored in the AWS Secrets Manager. 
+
 
 #### Retrieving versions of secrets
 Using the alias without specifying a version as shown above will retrieve the latest version of the secret. 
@@ -125,6 +156,28 @@ it will use the default procedure to retrieve these passwords by either reading 
 ### Step 1: Configuring the Carbon Server to use AWS to retrieve the root passwords.
 Set the following configurations in the `secret-conf.properties` file located at `<IS_HOME>/repository/conf/security/secret-conf.properties`.
 
+#### Novel method for using multiple vault secret repositories
+```
+keystore.identity.location=repository/resources/security/wso2carbon.jks
+keystore.identity.type=JKS
+keystore.identity.store.password=identity.store.password
+keystore.identity.store.secretProvider=org.wso2.carbon.securevault.aws.secret.handler.AWSSecretCallbackHandler
+keystore.identity.key.password=identity.key.password
+keystore.identity.key.secretProvider=org.wso2.carbon.securevault.aws.secret.handler.AWSSecretCallbackHandler
+carbon.secretProvider=org.wso2.securevault.secret.handler.SecretManagerSecretCallbackHandler
+keystore.identity.store.alias=<identity-keystore-password-alias>
+keystore.identity.key.alias=<private-key-alias>
+
+secVault.enabled=true
+secretProviders=vault
+secretProviders.vault.provider=org.wso2.securevault.secret.repository.VaultSecretRepositoryProvider
+secretProviders.vault.repositories=aws,<Other repositories if any>
+secretProviders.vault.repositories.aws=org.wso2.carbon.securevault.aws.secret.repository.AWSSecretRepository
+secretProviders.vault.repositories.aws.properties.awsregion=<AWS_Region>
+secretProviders.vault.repositories.aws.properties.credentialProviders=<Credential_Provider_Type>
+```
+
+#### Legacy method for using a single vault secret repository
 ```
 keystore.identity.location=repository/resources/security/wso2carbon.jks
 keystore.identity.type=JKS
@@ -142,6 +195,7 @@ secretRepositories.vault.provider=org.wso2.carbon.securevault.aws.secret.reposit
 secretRepositories.vault.properties.awsregion=<AWS_REGION>
 secretRepositories.vault.properties.credentialProviders=<Credential_Provider_Type>
 ```
+
 `<AWS_REGION>` and `<Credential_Provider_Type>` are same as in Setting up - Step 2.
 
 `<identity-keystore-password-alias>` - Secret Name used to store the identity keystore password.
