@@ -16,39 +16,39 @@
 
 #### Novel method for using multiple vault secret repositories
 ```
-   keystore.identity.location=repository/resources/security/wso2carbon.jks
-   keystore.identity.type=JKS
-   keystore.identity.store.password=identity.store.password
-   keystore.identity.store.secretProvider=org.wso2.carbon.securevault.DefaultSecretCallbackHandler
-   keystore.identity.key.password=identity.key.password
-   keystore.identity.key.secretProvider=org.wso2.carbon.securevault.DefaultSecretCallbackHandler
-   carbon.secretProvider=org.wso2.securevault.secret.handler.SecretManagerSecretCallbackHandler
+keystore.identity.location=repository/resources/security/wso2carbon.jks
+keystore.identity.type=JKS
+keystore.identity.store.password=identity.store.password
+keystore.identity.store.secretProvider=org.wso2.carbon.securevault.DefaultSecretCallbackHandler
+keystore.identity.key.password=identity.key.password
+keystore.identity.key.secretProvider=org.wso2.carbon.securevault.DefaultSecretCallbackHandler
+carbon.secretProvider=org.wso2.securevault.secret.handler.SecretManagerSecretCallbackHandler
 
-   secVault.enabled=true
-   secretProviders=vault
-   secretProviders.vault.provider=org.wso2.securevault.secret.repository.VaultSecretRepositoryProvider
-   secretProviders.vault.repositories=aws,<Other repositories if any>
-   secretProviders.vault.repositories.aws=org.wso2.carbon.securevault.aws.secret.repository.AWSSecretRepository
-   secretProviders.vault.repositories.aws.properties.awsregion=<AWS_Region>
-   secretProviders.vault.repositories.aws.properties.credentialProviders=<Credential_Provider_Type>
+secVault.enabled=true
+secretProviders=vault
+secretProviders.vault.provider=org.wso2.securevault.secret.repository.VaultSecretRepositoryProvider
+secretProviders.vault.repositories=aws,<Other repositories, if any>
+secretProviders.vault.repositories.aws=org.wso2.carbon.securevault.aws.secret.repository.AWSSecretRepository
+secretProviders.vault.repositories.aws.properties.awsregion=<AWS_Region>
+secretProviders.vault.repositories.aws.properties.credentialProviders=<Credential_Provider_Type>
 ```
 
 #### Legacy method for using a single vault secret repository
-   ```
-   keystore.identity.location=repository/resources/security/wso2carbon.jks
-   keystore.identity.type=JKS
-   keystore.identity.store.password=identity.store.password
-   keystore.identity.store.secretProvider=org.wso2.carbon.securevault.DefaultSecretCallbackHandler
-   keystore.identity.key.password=identity.key.password
-   keystore.identity.key.secretProvider=org.wso2.carbon.securevault.DefaultSecretCallbackHandler
-   carbon.secretProvider=org.wso2.securevault.secret.handler.SecretManagerSecretCallbackHandler
+```
+keystore.identity.location=repository/resources/security/wso2carbon.jks
+keystore.identity.type=JKS
+keystore.identity.store.password=identity.store.password
+keystore.identity.store.secretProvider=org.wso2.carbon.securevault.DefaultSecretCallbackHandler
+keystore.identity.key.password=identity.key.password
+keystore.identity.key.secretProvider=org.wso2.carbon.securevault.DefaultSecretCallbackHandler
+carbon.secretProvider=org.wso2.securevault.secret.handler.SecretManagerSecretCallbackHandler
 
-   secVault.enabled=true
-   secretRepositories=vault
-   secretRepositories.vault.provider=org.wso2.carbon.securevault.aws.secret.repository.AWSSecretRepositoryProvider
-   secretRepositories.vault.properties.awsregion=<AWS_Region>
-   secretRepositories.vault.properties.credentialProviders=<Credential_Provider_Type>
-   ```
+secVault.enabled=true
+secretRepositories=vault
+secretRepositories.vault.provider=org.wso2.carbon.securevault.aws.secret.repository.AWSSecretRepositoryProvider
+secretRepositories.vault.properties.awsregion=<AWS_Region>
+secretRepositories.vault.properties.credentialProviders=<Credential_Provider_Type>
+```
 
 Set appropriate values for `<AWS_REGION>` and `<Credential_Provider_Type>`.
 
