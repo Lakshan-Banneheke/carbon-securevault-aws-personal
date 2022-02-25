@@ -35,9 +35,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import static org.wso2.carbon.securevault.aws.common.AWSVaultConstants.AWS_REGION_PARAMETER;
+import static org.wso2.carbon.securevault.aws.common.AWSVaultConstants.AWS_REGION;
 import static org.wso2.carbon.securevault.aws.common.AWSVaultConstants.COMMA;
 import static org.wso2.carbon.securevault.aws.common.AWSVaultConstants.CREDENTIAL_PROVIDERS;
+import static org.wso2.carbon.securevault.aws.common.AWSVaultConstants.LEGACY_PROPERTIES_PATH;
+import static org.wso2.carbon.securevault.aws.common.AWSVaultConstants.NOVEL_PROPERTIES_PATH;
+import static org.wso2.carbon.securevault.aws.common.AWSVaultConstants.SECRET_REPOSITORIES;
 
 /**
  * Provides an instance of the secrets client that connects to the AWS Secrets Manager.
@@ -86,7 +89,8 @@ public class AWSSecretManagerClient {
      */
     private static Region getAWSRegion(Properties properties) throws AWSVaultException {
 
-        String regionString = properties.getProperty(AWS_REGION_PARAMETER);
+        String regionPropKey = getPropKey(properties, AWS_REGION);
+        String regionString = properties.getProperty(regionPropKey);
         if (StringUtils.isEmpty(regionString)) {
             throw new AWSVaultException("AWS Region has not been set in secret-conf.properties file. "
                     + "Cannot build AWS Secrets Client! ");
@@ -100,16 +104,18 @@ public class AWSSecretManagerClient {
 
     /**
      * Method to get the AWS Credential Provider Chain based on the configuration in the config file.
-     * If new credential provider types are needed to be added, add a new mapping in the switch statement.
+     * It will create a custom AWS Credential Provider Chain with all the provider types specified comma separated.
      *
      * @param properties Configuration properties.
      * @return AwsCredentialsProvider.
      * @throws AWSVaultException If the provider types are not specified or invalid.
      */
+
     private static AwsCredentialsProvider getCredentialsProvider(Properties properties) throws AWSVaultException {
 
         List<AwsCredentialsProvider> awsCredentialsProviders = new ArrayList<>();
-        String credentialProvidersString = properties.getProperty(CREDENTIAL_PROVIDERS);
+        String credentialProvidersPropKey = getPropKey(properties, CREDENTIAL_PROVIDERS);
+        String credentialProvidersString = properties.getProperty(credentialProvidersPropKey);
         String[] credentialProviderTypes;
 
         if (StringUtils.isNotEmpty(credentialProvidersString)) {
@@ -119,6 +125,7 @@ public class AWSSecretManagerClient {
                 credentialProviderTypes = new String[]{credentialProvidersString};
             }
 
+            //If new credential provider types are needed to be added, add a new mapping in the switch statement.
             for (String credentialType : credentialProviderTypes) {
                 switch (credentialType) {
                     case "env":
@@ -143,5 +150,29 @@ public class AWSSecretManagerClient {
         }
 
         return AwsCredentialsProviderChain.builder().credentialsProviders(awsCredentialsProviders).build();
+    }
+
+    /**
+     * Util method to get the properties key based on legacy or novel method used for defining the property
+     * in the configurations file.
+     *
+     * @param properties   Configuration properties.
+     * @param propertyName Name of the required property.
+     * @return Properties Key.
+     */
+    private static String getPropKey(Properties properties, String propertyName) {
+
+        boolean novelFlag = StringUtils.isEmpty(properties.getProperty(SECRET_REPOSITORIES, null));
+        if (novelFlag) {
+            if (log.isDebugEnabled()) {
+                log.debug("Properties specified in the novel method.");
+            }
+            return NOVEL_PROPERTIES_PATH + propertyName;
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("Properties specified in the legacy method.");
+            }
+            return LEGACY_PROPERTIES_PATH + propertyName;
+        }
     }
 }
