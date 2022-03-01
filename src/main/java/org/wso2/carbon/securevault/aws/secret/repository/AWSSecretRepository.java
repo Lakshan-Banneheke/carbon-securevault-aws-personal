@@ -22,6 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.securevault.aws.common.AWSSecretManagerClient;
+import org.wso2.carbon.securevault.aws.exception.AWSVaultException;
 import org.wso2.securevault.secret.SecretRepository;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
@@ -151,28 +152,37 @@ public class AWSSecretRepository implements SecretRepository {
      */
     private String[] getSecretVersion(String alias) {
 
-        String secretName = alias;
-        String secretVersion = null;
+        String[] aliasComponents = {alias, null};
 
         /*
          * Alias contains both the name and version of the secret being retrieved, separated by a "#" delimiter.
          * The version is optional and can be left blank.
          */
         if (alias.contains(DELIMITER)) {
-            int underscoreIndex = alias.indexOf(DELIMITER);
-            secretName = alias.substring(0, underscoreIndex);
-            secretVersion = alias.substring(underscoreIndex + 1);
-            if (log.isDebugEnabled()) {
-                log.debug("Secret version found for " + secretName.replaceAll(REGEX, "") + "." +
-                        " Retrieving the specified version of secret.");
+            if (StringUtils.countMatches(alias, DELIMITER) == 1) {
+
+                aliasComponents = alias.split(DELIMITER);
+
+                if (log.isDebugEnabled()) {
+                    if (StringUtils.isNotEmpty(aliasComponents[1])) {
+                        log.debug("Secret version found for " + aliasComponents[0].replaceAll(REGEX, "") + "." +
+                                " Retrieving the specified version of secret.");
+                    } else {
+                        log.debug("Secret version not found for " + aliasComponents[0].replaceAll(REGEX, "") +
+                                ". Retrieving latest version of secret.");
+                    }
+                }
+            } else {
+                throw new AWSVaultException("Secret alias contains multiple instances of the delimiter. " +
+                        "It should contain only one hashtag");
             }
         } else {
             if (log.isDebugEnabled()) {
-                log.debug("Secret version not found for " + secretName.replaceAll(REGEX, "") +
+                log.debug("Secret version not found for " + aliasComponents[0].replaceAll(REGEX, "") +
                         ". Retrieving latest version of secret.");
             }
         }
-        return new String[]{secretName, secretVersion};
+        return aliasComponents;
     }
 }
 
