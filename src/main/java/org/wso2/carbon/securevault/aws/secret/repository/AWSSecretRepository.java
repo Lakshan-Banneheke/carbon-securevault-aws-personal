@@ -167,6 +167,10 @@ public class AWSSecretRepository implements SecretRepository {
                     if (aliasComponents.length == 2) {
                         log.debug("Secret version found for " + aliasComponents[0].replaceAll(REGEX, "") + "." +
                                 " Retrieving the specified version of secret.");
+                    } else if (aliasComponents.length == 0) {
+                        aliasComponents = new String[]{alias, null};
+                        log.debug("Secret alias has not been specified. " +
+                                "Only the hashtag delimiter has been given as the alias");
                     } else {
                         aliasComponents = new String[]{aliasComponents[0], null};
                         log.debug("Secret version not found for " + aliasComponents[0].replaceAll(REGEX, "") +
