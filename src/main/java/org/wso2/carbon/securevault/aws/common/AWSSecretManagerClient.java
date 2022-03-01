@@ -28,6 +28,7 @@ import software.amazon.awssdk.auth.credentials.ContainerCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.InstanceProfileCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 
@@ -136,6 +137,10 @@ public class AWSSecretManagerClient {
                         break;
                     case "ecs":
                         awsCredentialsProviders.add(ContainerCredentialsProvider.builder().build());
+                        break;
+                    case "cli":
+                    case "profile":
+                        awsCredentialsProviders.add(ProfileCredentialsProvider.create());
                         break;
                     case "default":
                         awsCredentialsProviders.add(DefaultCredentialsProvider.create());
