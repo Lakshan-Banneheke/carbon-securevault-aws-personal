@@ -185,5 +185,3 @@ public class AWSSecretRepository implements SecretRepository {
         return aliasComponents;
     }
 }
-
-
