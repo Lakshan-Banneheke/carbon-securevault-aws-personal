@@ -164,17 +164,18 @@ public class AWSSecretRepository implements SecretRepository {
                 aliasComponents = alias.split(DELIMITER);
 
                 if (log.isDebugEnabled()) {
-                    if (StringUtils.isNotEmpty(aliasComponents[1])) {
+                    if (aliasComponents.length == 2) {
                         log.debug("Secret version found for " + aliasComponents[0].replaceAll(REGEX, "") + "." +
                                 " Retrieving the specified version of secret.");
                     } else {
+                        aliasComponents = new String[]{aliasComponents[0], null};
                         log.debug("Secret version not found for " + aliasComponents[0].replaceAll(REGEX, "") +
                                 ". Retrieving latest version of secret.");
                     }
                 }
             } else {
                 throw new AWSVaultException("Secret alias contains multiple instances of the delimiter. " +
-                        "It should contain only one hashtag");
+                        "It should contain only one hashtag.");
             }
         } else {
             if (log.isDebugEnabled()) {
