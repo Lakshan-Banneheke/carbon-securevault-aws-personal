@@ -39,6 +39,7 @@ public class AWSVaultConstants {
 
     public static final String COMMA = ",";
     public static final String DELIMITER = "#";
+    public static final String REGEX = "[\r\n]";
 
     public static final String SECRET_PROVIDERS = "secretProviders";
     public static final String SECRET_REPOSITORIES = "secretRepositories";
@@ -46,4 +47,6 @@ public class AWSVaultConstants {
     public static final String NOVEL_PROPERTIES_PATH = SECRET_PROVIDERS + ".vault.repositories.aws.properties.";
     public static final String CREDENTIAL_PROVIDERS = "credentialProviders";
     public static final String AWS_REGION = "awsregion";
+    public static final String ENCRYPTION_ENABLED = "encryption";
+
 }

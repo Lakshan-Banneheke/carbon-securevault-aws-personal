@@ -22,6 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.securevault.aws.common.AWSSecretManagerClient;
+import org.wso2.carbon.securevault.aws.common.AWSVaultUtils;
 import org.wso2.securevault.keystore.IdentityKeyStoreWrapper;
 import org.wso2.securevault.keystore.TrustKeyStoreWrapper;
 import org.wso2.securevault.secret.SecretRepository;
@@ -34,6 +35,8 @@ import software.amazon.awssdk.services.secretsmanager.model.SecretsManagerExcept
 import java.util.Properties;
 
 import static org.wso2.carbon.securevault.aws.common.AWSVaultConstants.DELIMITER;
+import static org.wso2.carbon.securevault.aws.common.AWSVaultConstants.ENCRYPTION_ENABLED;
+import static org.wso2.carbon.securevault.aws.common.AWSVaultConstants.REGEX;
 
 /**
  * AWS secret repository.
@@ -41,13 +44,13 @@ import static org.wso2.carbon.securevault.aws.common.AWSVaultConstants.DELIMITER
 public class AWSSecretRepository implements SecretRepository {
 
     private static final Log log = LogFactory.getLog(AWSSecretRepository.class);
-    public static final String REGEX = "[\r\n]";
 
     private SecretRepository parentRepository;
     // Secret Client used to retrieve secrets from AWS Secrets Manager Vault.
     private SecretsManagerClient secretsClient;
     private IdentityKeyStoreWrapper identityKeyStoreWrapper;
     private TrustKeyStoreWrapper trustKeyStoreWrapper;
+    private boolean encryptionEnabled = false;
 
     public AWSSecretRepository(IdentityKeyStoreWrapper identityKeyStoreWrapper,
                                TrustKeyStoreWrapper trustKeyStoreWrapper) {
@@ -70,6 +73,21 @@ public class AWSSecretRepository implements SecretRepository {
     public void init(Properties properties, String id) {
 
         log.info("Initializing AWS Secure Vault");
+        String encryptionEnabledPropertyString = AWSVaultUtils.getProperty(properties, ENCRYPTION_ENABLED);
+
+        boolean encryptionEnabledProperty = Boolean.parseBoolean(encryptionEnabledPropertyString);
+        if (encryptionEnabledProperty) {
+            if (log.isDebugEnabled()) {
+                log.debug("Encryption is enabled in AWS Secure Vault");
+            }
+            encryptionEnabled = true;
+
+        } else {
+            if (log.isDebugEnabled()) {
+                log.debug("Encryption is disabled in AWS Secure Vault");
+            }
+        }
+
         secretsClient = AWSSecretManagerClient.getInstance(properties);
     }
 
