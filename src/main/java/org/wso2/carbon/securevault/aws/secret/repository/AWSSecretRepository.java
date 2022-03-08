@@ -22,6 +22,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.securevault.aws.common.AWSSecretManagerClient;
+import org.wso2.securevault.keystore.IdentityKeyStoreWrapper;
+import org.wso2.securevault.keystore.TrustKeyStoreWrapper;
 import org.wso2.securevault.secret.SecretRepository;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
@@ -44,6 +46,19 @@ public class AWSSecretRepository implements SecretRepository {
     private SecretRepository parentRepository;
     // Secret Client used to retrieve secrets from AWS Secrets Manager Vault.
     private SecretsManagerClient secretsClient;
+    private IdentityKeyStoreWrapper identityKeyStoreWrapper;
+    private TrustKeyStoreWrapper trustKeyStoreWrapper;
+
+    public AWSSecretRepository(IdentityKeyStoreWrapper identityKeyStoreWrapper,
+                               TrustKeyStoreWrapper trustKeyStoreWrapper) {
+
+        this.identityKeyStoreWrapper = identityKeyStoreWrapper;
+        this.trustKeyStoreWrapper = trustKeyStoreWrapper;
+    }
+
+    public AWSSecretRepository() {
+
+    }
 
     /**
      * Initializes the AWS Secret repository based on provided properties.
