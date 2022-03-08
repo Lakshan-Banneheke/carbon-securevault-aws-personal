@@ -22,7 +22,6 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.securevault.aws.common.AWSSecretManagerClient;
-import org.wso2.carbon.securevault.aws.exception.AWSVaultException;
 import org.wso2.securevault.secret.SecretRepository;
 import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
@@ -163,18 +162,27 @@ public class AWSSecretRepository implements SecretRepository {
 
                 aliasComponents = alias.split(DELIMITER);
 
-                if (log.isDebugEnabled()) {
-                    if (aliasComponents.length == 2) {
+                if (aliasComponents.length == 2) {
+                    if (log.isDebugEnabled()) {
                         log.debug("Secret version found for " + aliasComponents[0].replaceAll(REGEX, "") + "." +
                                 " Retrieving the specified version of secret.");
-                    } else {
-                        aliasComponents = new String[]{aliasComponents[0], null};
+                    }
+                } else if (aliasComponents.length == 0) {
+                    aliasComponents = new String[]{alias, null};
+                    log.error("Secret alias has not been specified. " +
+                            "Only the hashtag delimiter has been given as the alias");
+                } else {
+                    aliasComponents = new String[]{aliasComponents[0], null};
+                    if (log.isDebugEnabled()) {
                         log.debug("Secret version not found for " + aliasComponents[0].replaceAll(REGEX, "") +
                                 ". Retrieving latest version of secret.");
                     }
+
                 }
+
             } else {
-                throw new AWSVaultException("Secret alias contains multiple instances of the delimiter. " +
+                log.error("Secret alias" + alias.replaceAll(REGEX, "") + " contains multiple instances of " +
+                        "the delimiter. It should be of the format secretName#secretVersion. " +
                         "It should contain only one hashtag.");
             }
         } else {
