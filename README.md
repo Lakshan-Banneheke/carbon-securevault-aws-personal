@@ -18,6 +18,7 @@
 ```
 keystore.identity.location=repository/resources/security/wso2carbon.jks
 keystore.identity.type=JKS
+keystore.identity.alias=wso2carbon
 keystore.identity.store.password=identity.store.password
 keystore.identity.store.secretProvider=org.wso2.carbon.securevault.DefaultSecretCallbackHandler
 keystore.identity.key.password=identity.key.password
@@ -37,6 +38,7 @@ secretProviders.vault.repositories.aws.properties.credentialProviders=<Credentia
 ```
 keystore.identity.location=repository/resources/security/wso2carbon.jks
 keystore.identity.type=JKS
+keystore.identity.alias=wso2carbon
 keystore.identity.store.password=identity.store.password
 keystore.identity.store.secretProvider=org.wso2.carbon.securevault.DefaultSecretCallbackHandler
 keystore.identity.key.password=identity.key.password
@@ -48,9 +50,10 @@ secretRepositories=vault
 secretRepositories.vault.provider=org.wso2.carbon.securevault.aws.secret.repository.AWSSecretRepositoryProvider
 secretRepositories.vault.properties.awsregion=<AWS_Region>
 secretRepositories.vault.properties.credentialProviders=<Credential_Provider_Type>
+secretRepositories.vault.properties.encryption=<ENCRYPTION_ENABLED>
 ```
 
-Set appropriate values for `<AWS_REGION>` and `<Credential_Provider_Type>`.
+Set appropriate values for `<AWS_REGION>`, `<Credential_Provider_Type>`, `<ENCRYPTION_ENABLED>`
 
    `<AWS_REGION>` - The region where the AWS Secrets Manager is deployed.
 
@@ -59,7 +62,7 @@ Set appropriate values for `<AWS_REGION>` and `<Credential_Provider_Type>`.
    `<Credential_Provider_Type>` - Specify the credential provider type to be used to authenticate the user into AWS.
    Valid values are `env`, `ecs`, `ec2`, `cli`, `profile`, `default`. These values can be added singularly or comma separate to form an authentication chain in the specified order. This is further explained in Step 3.
 
-
+   `<ENCRYPTION_ENABLED>` - Specify either true or false. If set to true, the secrets stored in the AWS Secrets Manager (except the root password) has to be encrypted beforehand using the cipher tool.
 ### Step 3: Setting up AWS Credentials for authentication
 
    The credential provider type for authentication into AWS can be set by the `<Credential_Provider_Type>` as mentioned above.
@@ -161,6 +164,7 @@ Set the following configurations in the `secret-conf.properties` file located at
 ```
 keystore.identity.location=repository/resources/security/wso2carbon.jks
 keystore.identity.type=JKS
+keystore.identity.alias=wso2carbon
 keystore.identity.store.password=identity.store.password
 keystore.identity.store.secretProvider=org.wso2.carbon.securevault.aws.secret.handler.AWSSecretCallbackHandler
 keystore.identity.key.password=identity.key.password
@@ -182,6 +186,7 @@ secretProviders.vault.repositories.aws.properties.credentialProviders=<Credentia
 ```
 keystore.identity.location=repository/resources/security/wso2carbon.jks
 keystore.identity.type=JKS
+keystore.identity.alias=wso2carbon
 keystore.identity.store.password=identity.store.password
 keystore.identity.store.secretProvider=org.wso2.carbon.securevault.aws.secret.handler.AWSSecretCallbackHandler
 keystore.identity.key.password=identity.key.password
@@ -208,4 +213,5 @@ The above secrets use the same versioning mechanism as deployment secrets mentio
 ### Step 2: Store the secrets in AWS Secrets Manager.
 Log in to AWS Secrets Manager and create secrets using the aliases used above to store the required passwords.
 
+Note: If encryption is enabled, the secrets (except the root password) have to be encrypted beforehand using the cipher tool.
 ##### Now you are all set to use the AWS Secrets Manager based extension for WSO2 Carbon Secure Vault 😄
