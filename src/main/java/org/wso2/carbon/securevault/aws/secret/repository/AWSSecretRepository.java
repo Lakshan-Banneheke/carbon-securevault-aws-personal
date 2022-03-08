@@ -23,7 +23,13 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.wso2.carbon.securevault.aws.common.AWSSecretManagerClient;
 import org.wso2.carbon.securevault.aws.common.AWSVaultUtils;
+import org.wso2.securevault.CipherFactory;
+import org.wso2.securevault.CipherOperationMode;
+import org.wso2.securevault.DecryptionProvider;
+import org.wso2.securevault.EncodingType;
+import org.wso2.securevault.definition.CipherInformation;
 import org.wso2.securevault.keystore.IdentityKeyStoreWrapper;
+import org.wso2.securevault.keystore.KeyStoreWrapper;
 import org.wso2.securevault.keystore.TrustKeyStoreWrapper;
 import org.wso2.securevault.secret.SecretRepository;
 import software.amazon.awssdk.core.exception.SdkClientException;
@@ -32,11 +38,16 @@ import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueReques
 import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueResponse;
 import software.amazon.awssdk.services.secretsmanager.model.SecretsManagerException;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Properties;
 
+import static org.wso2.carbon.securevault.aws.common.AWSVaultConstants.ALGORITHM;
+import static org.wso2.carbon.securevault.aws.common.AWSVaultConstants.DEFAULT_ALGORITHM;
 import static org.wso2.carbon.securevault.aws.common.AWSVaultConstants.DELIMITER;
 import static org.wso2.carbon.securevault.aws.common.AWSVaultConstants.ENCRYPTION_ENABLED;
+import static org.wso2.carbon.securevault.aws.common.AWSVaultConstants.KEY_STORE;
 import static org.wso2.carbon.securevault.aws.common.AWSVaultConstants.REGEX;
+import static org.wso2.carbon.securevault.aws.common.AWSVaultConstants.TRUSTED;
 
 /**
  * AWS secret repository.
@@ -50,17 +61,21 @@ public class AWSSecretRepository implements SecretRepository {
     private SecretsManagerClient secretsClient;
     private IdentityKeyStoreWrapper identityKeyStoreWrapper;
     private TrustKeyStoreWrapper trustKeyStoreWrapper;
-    private boolean encryptionEnabled = false;
+    private DecryptionProvider baseCipher;
+    private boolean encryptionEnabled;
+    private final boolean decryptionNeeded;
 
     public AWSSecretRepository(IdentityKeyStoreWrapper identityKeyStoreWrapper,
                                TrustKeyStoreWrapper trustKeyStoreWrapper) {
 
         this.identityKeyStoreWrapper = identityKeyStoreWrapper;
         this.trustKeyStoreWrapper = trustKeyStoreWrapper;
+        this.decryptionNeeded = true;
     }
 
     public AWSSecretRepository() {
 
+        this.decryptionNeeded = false;
     }
 
     /**
@@ -76,13 +91,15 @@ public class AWSSecretRepository implements SecretRepository {
         String encryptionEnabledPropertyString = AWSVaultUtils.getProperty(properties, ENCRYPTION_ENABLED);
 
         boolean encryptionEnabledProperty = Boolean.parseBoolean(encryptionEnabledPropertyString);
-        if (encryptionEnabledProperty) {
+        if (encryptionEnabledProperty && decryptionNeeded) {
             if (log.isDebugEnabled()) {
                 log.debug("Encryption is enabled in AWS Secure Vault");
             }
             encryptionEnabled = true;
+            initDecryptionProvider(properties);
 
         } else {
+            encryptionEnabled = false;
             if (log.isDebugEnabled()) {
                 log.debug("Encryption is disabled in AWS Secure Vault");
             }
@@ -104,6 +121,39 @@ public class AWSSecretRepository implements SecretRepository {
         if (StringUtils.isEmpty(alias)) {
             return alias;
         }
+
+        String secret = retrieveSecretFromAWS(alias);
+
+        if (encryptionEnabled) {
+            //Decrypting the secret.
+            return new String(baseCipher.decrypt(secret.trim().getBytes(StandardCharsets.UTF_8)),
+                    StandardCharsets.UTF_8);
+        } else {
+            return secret;
+        }
+    }
+
+    /**
+     * Get Encrypted data. This is only supported if encryption is enabled.
+     *
+     * @param alias Alias of the secret.
+     */
+    @Override
+    public String getEncryptedData(String alias) {
+
+        if (encryptionEnabled || !decryptionNeeded) {
+            return retrieveSecretFromAWS(alias);
+        } else {
+            throw new UnsupportedOperationException();
+        }
+    }
+
+    /**
+     * Retrieve the secret from the AWS Secrets Manager.
+     *
+     * @param alias Alias of the secret.
+     */
+    private String retrieveSecretFromAWS(String alias) {
 
         String secret = alias;
 
@@ -142,14 +192,27 @@ public class AWSSecretRepository implements SecretRepository {
     }
 
     /**
-     * Get Encrypted data. This is not supported in this extension.
-     *
-     * @param alias Alias of the secret.
+     * Initialize the Decryption provider using the keystore if encryption is enabled for the vault.
      */
-    @Override
-    public String getEncryptedData(String alias) {
+    private void initDecryptionProvider(Properties properties) {
+        //Load algorithm
+        String algorithm = AWSVaultUtils.getProperty(properties, ALGORITHM, DEFAULT_ALGORITHM);
 
-        throw new UnsupportedOperationException();
+        //Load keyStore
+        String keyStore = AWSVaultUtils.getProperty(properties, KEY_STORE, null);
+        KeyStoreWrapper keyStoreWrapper;
+        if (TRUSTED.equals(keyStore)) {
+            keyStoreWrapper = trustKeyStoreWrapper;
+        } else {
+            keyStoreWrapper = identityKeyStoreWrapper;
+        }
+
+        //Creates a cipherInformation
+        CipherInformation cipherInformation = new CipherInformation();
+        cipherInformation.setAlgorithm(algorithm);
+        cipherInformation.setCipherOperationMode(CipherOperationMode.DECRYPT);
+        cipherInformation.setInType(EncodingType.BASE64);
+        baseCipher = CipherFactory.createCipher(cipherInformation, keyStoreWrapper);
     }
 
     /**
@@ -226,4 +289,5 @@ public class AWSSecretRepository implements SecretRepository {
         }
         return aliasComponents;
     }
+
 }

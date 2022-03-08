@@ -50,6 +50,25 @@ public class AWSVaultUtils {
      * @return Properties Key.
      */
     public static String getProperty(Properties properties, String propertyName) {
+        String propKey = getPropKey(properties, propertyName);
+        String property = properties.getProperty(propKey);
+        if (StringUtils.isEmpty(property)) {
+            throw new AWSVaultException("Property " + propertyName.replaceAll(REGEX, "") +
+                    " has not been set in secret-conf.properties file. Cannot build AWS Secrets Client! ");
+        }
+        return property;
+    }
+
+    public static String getProperty(Properties properties, String propertyName, String defaultValue) {
+        String propKey = getPropKey(properties, propertyName);
+        String property = properties.getProperty(propKey);
+        if (StringUtils.isEmpty(property)) {
+            return defaultValue;
+        }
+        return property;
+    }
+
+    private static String getPropKey(Properties properties, String propertyName) {
 
         String propKey;
         boolean novelFlag = StringUtils.isEmpty(properties.getProperty(SECRET_REPOSITORIES, null));
@@ -64,11 +83,6 @@ public class AWSVaultUtils {
             }
             propKey = LEGACY_PROPERTIES_PATH + propertyName;
         }
-        String property = properties.getProperty(propKey);
-        if (StringUtils.isEmpty(property)) {
-            throw new AWSVaultException("Property " + propertyName.replaceAll(REGEX, "") +
-                    " has not been set in secret-conf.properties file. Cannot build AWS Secrets Client! ");
-        }
-        return property;
+        return propKey;
     }
 }

@@ -40,6 +40,9 @@ public class AWSVaultConstants {
     public static final String COMMA = ",";
     public static final String DELIMITER = "#";
     public static final String REGEX = "[\r\n]";
+    public static final String DEFAULT_ALGORITHM = "RSA";
+    public static final String KEY_STORE = "keyStore";
+    public static final String TRUSTED = "trusted";
 
     public static final String SECRET_PROVIDERS = "secretProviders";
     public static final String SECRET_REPOSITORIES = "secretRepositories";
@@ -48,5 +51,7 @@ public class AWSVaultConstants {
     public static final String CREDENTIAL_PROVIDERS = "credentialProviders";
     public static final String AWS_REGION = "awsregion";
     public static final String ENCRYPTION_ENABLED = "encryption";
+    public static final String ALGORITHM = "algorithm";
+
 
 }
