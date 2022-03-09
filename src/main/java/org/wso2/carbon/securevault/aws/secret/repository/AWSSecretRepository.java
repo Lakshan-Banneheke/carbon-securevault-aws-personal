@@ -93,7 +93,7 @@ public class AWSSecretRepository implements SecretRepository {
         boolean encryptionEnabledProperty = Boolean.parseBoolean(encryptionEnabledPropertyString);
         if (encryptionEnabledProperty && decryptionNeeded) {
             if (log.isDebugEnabled()) {
-                log.debug("Encryption is enabled in AWS Secure Vault");
+                log.debug("Encryption is enabled in AWS Secure Vault.");
             }
             encryptionEnabled = true;
             initDecryptionProvider(properties);
