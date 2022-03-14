@@ -215,4 +215,7 @@ The above secrets use the same versioning mechanism as deployment secrets mentio
 Log in to AWS Secrets Manager and create secrets using the aliases used above to store the required passwords.
 
 Note: If encryption is enabled, the secrets (except the root password) have to be encrypted beforehand using the cipher tool and the encrypted value should be stored.
+
+[A guide to deploying the IS with this extension on an AWS EKS cluster.](https://docs.google.com/document/d/1-SokAGTqhyABNKLxGOrZrQnhSgcjdeHvumlt9BDyAv8/edit?usp=sharing)
+
 ##### Now you are all set to use the AWS Secrets Manager based extension for WSO2 Carbon Secure Vault 😄
