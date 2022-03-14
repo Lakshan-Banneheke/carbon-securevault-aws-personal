@@ -28,6 +28,7 @@ import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.EnvironmentVariableCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.InstanceProfileCredentialsProvider;
 import software.amazon.awssdk.auth.credentials.ProfileCredentialsProvider;
+import software.amazon.awssdk.auth.credentials.WebIdentityTokenFileCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 
@@ -131,6 +132,10 @@ public class AWSSecretManagerClient {
                 case "cli":
                 case "profile":
                     awsCredentialsProviders.add(ProfileCredentialsProvider.create());
+                    break;
+                case "webIdentity":
+                case "k8sServiceAccount":
+                    awsCredentialsProviders.add(WebIdentityTokenFileCredentialsProvider.create());
                     break;
                 case "default":
                     awsCredentialsProviders.add(DefaultCredentialsProvider.create());
