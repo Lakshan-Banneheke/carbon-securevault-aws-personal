@@ -22,6 +22,7 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.wso2.carbon.securevault.aws.common.AWSVaultUtils;
 import org.wso2.carbon.securevault.aws.exception.AWSSecretCallbackHandlerException;
 import org.wso2.carbon.securevault.aws.secret.repository.AWSSecretRepository;
 import org.wso2.securevault.secret.AbstractSecretCallbackHandler;
@@ -33,6 +34,7 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import static org.wso2.carbon.securevault.aws.common.AWSVaultConstants.CONFIG_FILE_PATH;
+import static org.wso2.carbon.securevault.aws.common.AWSVaultConstants.ENCRYPTION_ENABLED;
 import static org.wso2.carbon.securevault.aws.common.AWSVaultConstants.IDENTITY_KEY_PASSWORD_ALIAS;
 import static org.wso2.carbon.securevault.aws.common.AWSVaultConstants.IDENTITY_STORE_PASSWORD_ALIAS;
 
@@ -104,11 +106,25 @@ public class AWSSecretCallbackHandler extends AbstractSecretCallbackHandler {
 
         AWSSecretRepository awsSecretRepository = new AWSSecretRepository();
         awsSecretRepository.init(properties, "AWSSecretRepository");
-        keyStorePassword = awsSecretRepository.getSecret(keyStoreAlias);
+
+        String encryptionEnabledPropertyString = AWSVaultUtils.getProperty(properties, ENCRYPTION_ENABLED);
+
+        boolean encryptionEnabled = Boolean.parseBoolean(encryptionEnabledPropertyString);
+        keyStorePassword = getFromRepository(keyStoreAlias, awsSecretRepository, encryptionEnabled);
+
         if (sameKeyAndKeyStorePass) {
             privateKeyPassword = keyStorePassword;
         } else {
-            privateKeyPassword = awsSecretRepository.getSecret(privateKeyAlias);
+            privateKeyPassword = getFromRepository(privateKeyAlias, awsSecretRepository, encryptionEnabled);
+        }
+    }
+
+    private String getFromRepository(String alias, AWSSecretRepository awsSecretRepository, boolean encryptionEnabled) {
+
+        if (encryptionEnabled) {
+            return awsSecretRepository.getEncryptedData(alias);
+        } else {
+            return awsSecretRepository.getSecret(alias);
         }
     }
 }
