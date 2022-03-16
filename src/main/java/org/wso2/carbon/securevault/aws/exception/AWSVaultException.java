@@ -27,9 +27,4 @@ public class AWSVaultException extends RuntimeException {
 
         super(message);
     }
-
-    public AWSVaultException(String message, Throwable e) {
-
-        super(message, e);
-    }
 }

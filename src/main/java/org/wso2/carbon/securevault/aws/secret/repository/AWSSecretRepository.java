@@ -170,11 +170,9 @@ public class AWSSecretRepository implements SecretRepository {
 
         } catch (SecretsManagerException e) {
             log.error("Error retrieving secret with alias " + alias.replaceAll(REGEX, "") +
-                    " from AWS Secrets Manager Vault.");
-            log.error(e.awsErrorDetails().errorMessage().replaceAll(REGEX, ""));
+                    " from AWS Secrets Manager Vault.", e);
         } catch (SdkClientException e) {
-            log.error("Error establishing connection to AWS.");
-            log.error(e.getMessage().replaceAll(REGEX, ""));
+            log.error("Error establishing connection to AWS.", e);
         }
         return secret;
     }
@@ -235,6 +233,9 @@ public class AWSSecretRepository implements SecretRepository {
         cipherInformation.setCipherOperationMode(CipherOperationMode.DECRYPT);
         cipherInformation.setInType(EncodingType.BASE64);
         baseCipher = CipherFactory.createCipher(cipherInformation, keyStoreWrapper);
+        if (log.isDebugEnabled()) {
+            log.debug("Cipher has been created for decryption in AWS Secret Repository.");
+        }
     }
 
     /**

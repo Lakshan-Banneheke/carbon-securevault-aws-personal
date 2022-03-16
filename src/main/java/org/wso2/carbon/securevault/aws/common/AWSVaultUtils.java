@@ -47,18 +47,28 @@ public class AWSVaultUtils {
      *
      * @param properties   Configuration properties.
      * @param propertyName Name of the required property.
-     * @return Properties Key.
+     * @return Property value.
      */
     public static String getProperty(Properties properties, String propertyName) {
         String propKey = getPropKey(properties, propertyName);
         String property = properties.getProperty(propKey);
         if (StringUtils.isEmpty(property)) {
             throw new AWSVaultException("Property " + propertyName.replaceAll(REGEX, "") +
-                    " has not been set in secret-conf.properties file. Cannot build AWS Secrets Client! ");
+                    " has not been set in secret-conf.properties file. Cannot build AWS Secrets Client!");
         }
         return property;
     }
 
+    /**
+     * Util method to get the properties based on legacy or novel method used for defining the property in the
+     * configurations file. If a default value is passed to the method, it will return the default value instead of
+     * throwing an error if the property is empty.
+     *
+     * @param properties Configuration properties.
+     * @param propertyName Name of the required property.
+     * @param defaultValue Returns this value if property is empty.
+     * @return Property value.
+     */
     public static String getProperty(Properties properties, String propertyName, String defaultValue) {
         String propKey = getPropKey(properties, propertyName);
         String property = properties.getProperty(propKey);
@@ -68,6 +78,13 @@ public class AWSVaultUtils {
         return property;
     }
 
+    /**
+     * Util method to return the accurate property key based on novel or legacy configuration.
+     *
+     * @param properties Configuration properties.
+     * @param propertyName Name of the required property.
+     * @return Property Key.
+     */
     private static String getPropKey(Properties properties, String propertyName) {
 
         String propKey;
