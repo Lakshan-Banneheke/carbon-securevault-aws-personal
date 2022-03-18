@@ -128,6 +128,8 @@
                             org.apache.http.protocol;version="${httpcomponents-httpcore.osgi.version.range}",
 
                             org.wso2.carbon.utils;version="${carbon.kernel.version.range}",
+                            org.wso2.securevault;version="${org.wso2.securevault.version.range}",
+                            org.wso2.securevault.definition;version="${org.wso2.securevault.version.range}",
                             org.wso2.securevault.keystore;version="${org.wso2.securevault.version.range}",
                             org.wso2.securevault.secret;version="${org.wso2.securevault.version.range}",
                         </Import-Package>
@@ -152,7 +154,9 @@
                             metrics-spi,
                             apache-client,
                             aws-crt-client,
-                            aws-crt
+                            aws-crt,
+                            sts,
+                            aws-query-protocol,
                         </Embed-Dependency>
                         <Embed-Transitive>true</Embed-Transitive>
                         <_fixupmessages>"Classes found in the wrong directory..."</_fixupmessages>
@@ -232,6 +236,17 @@
             <groupId>software.amazon.awssdk</groupId>
             <artifactId>aws-crt-client</artifactId>
             <version>${software.amazon.awssdk.aws-crt-client.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>sts</artifactId>
+            <version>${software.amazon.awssdk.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>software.amazon.awssdk</groupId>
+                    <artifactId>netty-nio-client</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.github.spotbugs</groupId>
