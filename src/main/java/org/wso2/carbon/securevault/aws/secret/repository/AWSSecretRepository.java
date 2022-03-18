@@ -33,11 +33,9 @@ import org.wso2.securevault.keystore.IdentityKeyStoreWrapper;
 import org.wso2.securevault.keystore.KeyStoreWrapper;
 import org.wso2.securevault.keystore.TrustKeyStoreWrapper;
 import org.wso2.securevault.secret.SecretRepository;
-import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.services.secretsmanager.SecretsManagerClient;
 import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueRequest;
 import software.amazon.awssdk.services.secretsmanager.model.GetSecretValueResponse;
-import software.amazon.awssdk.services.secretsmanager.model.SecretsManagerException;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Properties;
@@ -143,37 +141,30 @@ public class AWSSecretRepository implements SecretRepository {
      */
     private String retrieveSecretFromAWS(String alias) {
 
-        String secret = alias;
+        String secret;
 
-        try {
-            String[] versionDetails = getSecretVersion(alias);
-            String secretName = versionDetails[0];
-            String secretVersion = versionDetails[1];
+        String[] versionDetails = getSecretVersion(alias);
+        String secretName = versionDetails[0];
+        String secretVersion = versionDetails[1];
 
-            GetSecretValueRequest valueRequest = GetSecretValueRequest.builder()
-                    .secretId(secretName)
-                    .versionId(secretVersion)
-                    .build();
+        GetSecretValueRequest valueRequest = GetSecretValueRequest.builder()
+                .secretId(secretName)
+                .versionId(secretVersion)
+                .build();
 
-            GetSecretValueResponse valueResponse = secretsClient.getSecretValue(valueRequest);
-            secret = valueResponse.secretString();
+        GetSecretValueResponse valueResponse = secretsClient.getSecretValue(valueRequest);
+        secret = valueResponse.secretString();
 
-            if (log.isDebugEnabled()) {
-                if (StringUtils.isEmpty(secret)) {
-                    log.debug("There is no secret found for alias '" + alias.replaceAll(REGEX, "") +
-                            "' returning itself.");
-                    return alias;
-                } else {
-                    log.debug("Secret " + secretName.replaceAll(REGEX, "") + " is retrieved.");
-                }
+        if (log.isDebugEnabled()) {
+            if (StringUtils.isEmpty(secret)) {
+                log.debug("Empty secret found for alias '" + alias.replaceAll(REGEX, "") +
+                        "' returning itself.");
+                return alias;
+            } else {
+                log.debug("Secret " + secretName.replaceAll(REGEX, "") + " is retrieved.");
             }
-
-        } catch (SecretsManagerException e) {
-            log.error("Error retrieving secret with alias " + alias.replaceAll(REGEX, "") +
-                    " from AWS Secrets Manager Vault.", e);
-        } catch (SdkClientException e) {
-            log.error("Error establishing connection to AWS.", e);
         }
+
         return secret;
     }
 
