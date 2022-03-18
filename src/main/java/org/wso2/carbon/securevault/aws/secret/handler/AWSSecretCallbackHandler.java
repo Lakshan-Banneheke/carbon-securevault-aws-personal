@@ -22,7 +22,6 @@ import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.wso2.carbon.securevault.aws.common.AWSVaultUtils;
 import org.wso2.carbon.securevault.aws.exception.AWSSecretCallbackHandlerException;
 import org.wso2.carbon.securevault.aws.secret.repository.AWSSecretRepository;
 import org.wso2.securevault.secret.AbstractSecretCallbackHandler;
@@ -34,7 +33,6 @@ import java.io.InputStream;
 import java.util.Properties;
 
 import static org.wso2.carbon.securevault.aws.common.AWSVaultConstants.CONFIG_FILE_PATH;
-import static org.wso2.carbon.securevault.aws.common.AWSVaultConstants.ENCRYPTION_ENABLED;
 import static org.wso2.carbon.securevault.aws.common.AWSVaultConstants.IDENTITY_KEY_PASSWORD_ALIAS;
 import static org.wso2.carbon.securevault.aws.common.AWSVaultConstants.IDENTITY_STORE_PASSWORD_ALIAS;
 
@@ -86,6 +84,7 @@ public class AWSSecretCallbackHandler extends AbstractSecretCallbackHandler {
 
         Properties properties = new Properties();
 
+        //Reading configurations from file.
         try (InputStream inputStream = new FileInputStream(CONFIG_FILE_PATH)) {
             properties.load(inputStream);
 
@@ -98,33 +97,25 @@ public class AWSSecretCallbackHandler extends AbstractSecretCallbackHandler {
 
         if (StringUtils.isEmpty(keyStoreAlias)) {
             throw new AWSSecretCallbackHandlerException("keystore.identity.store.alias property has not been set. " +
-                    "Unable to retrieve root keystore password from AWS Secrets Manager. ");
+                    "Unable to retrieve root keystore password from AWS Secrets Manager.");
         } else if (StringUtils.isEmpty(privateKeyAlias) && !sameKeyAndKeyStorePass) {
             throw new AWSSecretCallbackHandlerException("keystore.identity.key.alias property has not been set. " +
-                    "Unable to retrieve root private key from AWS Secrets Manager. ");
+                    "Unable to retrieve root private key from AWS Secrets Manager.");
         }
 
         AWSSecretRepository awsSecretRepository = new AWSSecretRepository();
-        awsSecretRepository.init(properties, "AWSSecretRepository");
+        awsSecretRepository.init(properties, "AWSSecretRepositoryForRootPassword");
 
-        String encryptionEnabledPropertyString = AWSVaultUtils.getProperty(properties, ENCRYPTION_ENABLED);
-
-        boolean encryptionEnabled = Boolean.parseBoolean(encryptionEnabledPropertyString);
-        keyStorePassword = getFromRepository(keyStoreAlias, awsSecretRepository, encryptionEnabled);
+        if (log.isDebugEnabled()) {
+            log.debug("Retrieving root password from AWS Secret Manager.");
+        }
+        keyStorePassword = awsSecretRepository.getSecret(keyStoreAlias);
 
         if (sameKeyAndKeyStorePass) {
             privateKeyPassword = keyStorePassword;
         } else {
-            privateKeyPassword = getFromRepository(privateKeyAlias, awsSecretRepository, encryptionEnabled);
+            privateKeyPassword = awsSecretRepository.getSecret(privateKeyAlias);
         }
     }
 
-    private String getFromRepository(String alias, AWSSecretRepository awsSecretRepository, boolean encryptionEnabled) {
-
-        if (encryptionEnabled) {
-            return awsSecretRepository.getEncryptedData(alias);
-        } else {
-            return awsSecretRepository.getSecret(alias);
-        }
-    }
 }

@@ -50,7 +50,7 @@ public class AWSVaultConstants {
     public static final String NOVEL_PROPERTIES_PATH = SECRET_PROVIDERS + ".vault.repositories.aws.properties.";
     public static final String CREDENTIAL_PROVIDERS = "credentialProviders";
     public static final String AWS_REGION = "awsregion";
-    public static final String ENCRYPTION_ENABLED = "encryption";
+    public static final String ENCRYPTION_ENABLED = "encryptionEnabled";
     public static final String ALGORITHM = "algorithm";
 
 

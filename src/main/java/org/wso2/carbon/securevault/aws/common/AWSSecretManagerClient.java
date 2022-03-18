@@ -91,7 +91,7 @@ public class AWSSecretManagerClient {
 
         Region region = Region.of(regionString);
         if (!Region.regions().contains(region)) {
-            throw new AWSVaultException("AWS Region specified is invalid. Cannot build AWS Secrets Client! ");
+            throw new AWSVaultException("AWS Region specified is invalid. Cannot build AWS Secrets Client!");
         }
         return region;
     }
@@ -141,10 +141,12 @@ public class AWSSecretManagerClient {
                     awsCredentialsProviders.add(DefaultCredentialsProvider.create());
                     break;
                 default:
-                    throw new AWSVaultException("Credential provider type " + credentialType + " is invalid. ");
+                    throw new AWSVaultException("Credential provider type " + credentialType + " is invalid.");
             }
         }
-
+        if (log.isDebugEnabled()) {
+            log.debug("Custom credential provider chain has been created for AWS authentication.");
+        }
         return AwsCredentialsProviderChain.builder().credentialsProviders(awsCredentialsProviders).build();
     }
 }
